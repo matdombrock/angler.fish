@@ -1,3 +1,5 @@
+![yodawg](doc/yodawg.png)
+
 Prints a random fish name and description
 
 Use `--no-greet` to supress the greeting graphics
