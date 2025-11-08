@@ -37,4 +37,6 @@ else
     echo "No supported package manager found!" && exit 1
 end
 
-$mode $query
+if not test "$_" = source
+    $mode $query
+end
