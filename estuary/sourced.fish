@@ -1,8 +1,3 @@
-# Source a file that exists in the relative dir
-# Even if the script if being run from another dir
-set script_dir (dirname $fish_source)
-source $script_dir/other_file.fish
-
 # Check if the script is being sourced or executed 
 if test "$_" = source
     echo This file is being sourced

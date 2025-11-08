@@ -1,5 +1,10 @@
+#! /usr/bin/env fish
+
 # Seer is a terminal file explorer using fzf for selection and previewing files.
 # It allows navigation through directories and opening files with the default editor.
+
+# TODO:
+# If the file is exexutable, offer to run it vs edit it.
 
 function seer
     # Check for fzf
@@ -16,17 +21,18 @@ function seer
     end
     set fzf_preview 'fish -c "
     if test -f {}; 
-        echo file:
+        echo (set_color --bold bryellow)file(set_color normal):
         '$file_viewer' {}; 
     else if test -d {}; 
-        echo directory:
-        ls -a {}; 
+        echo (set_color --bold brred)directory(set_color normal):
+        ls -A {}; 
     else; 
         echo \"Not a file or directory\"; 
     end
 "'
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
-        --preview="$fzf_preview {}" --preview-window=right:60%:wrap
+        --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
+        --bind=right:accept
 
     set exit_msg '📁 exit'
     set home_msg '~/'
@@ -52,14 +58,12 @@ function seer
 
     # Check if sel is null or empty
     if test -z "$sel"
-        echo No selection made. Exiting seer.
         echo (pwd)
         return
     end
 
     # Handle exit
     if test "$sel" = "$exit_msg"
-        echo Exiting seer.
         echo (pwd)
         return
     end

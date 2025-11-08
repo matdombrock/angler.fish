@@ -1,6 +1,7 @@
 #! /usr/bin/env fish
 
-source ../lib/dict.fish
+set base (dirname (realpath (status --current-filename)))
+source $base/../lib/dict.fish
 
 # Check for fzf
 if not type -q fzf
@@ -68,7 +69,7 @@ function expand_cmds
     end
 end
 
-set cmd_path finder_commands.fish
+set cmd_path $base/finder_commands.fish
 # Check if we have a FF_COMMANDS_PATH env var
 if set -q FF_CMD_PATH
     echo overriding command path with $FF_CMD_PATH

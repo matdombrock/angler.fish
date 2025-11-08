@@ -1,6 +1,15 @@
-cdf
-if dir open
-if file edit/view
-allows search
-keep going until edit or user exits
-allow use without changing dir
+reel.fish
+reel.big.fish
+fishfinder is a good name for seer. It can be shorted to ff. 
+This is the most useful command so far and the name fits well
+But then what is fishfinder now called?
+Fish launcher? Just call it tacklebox? tbox? 
+
+
+Does it make more sense to expect users to do something like:
+
+alias mytool='bash /path/to/mytool.sh'
+
+or to have them source a function like:
+source /path/to/mytool.sh
+

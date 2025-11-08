@@ -1,7 +1,7 @@
 #! /usr/bin/env fish
 
-source ../lib/dict.fish
-source ../lib/input.fish
+source (dirname (realpath (status --current-filename)))/../lib/dict.fish
+source (dirname (realpath (status --current-filename)))/../lib/input.fish
 
 set sc_intro \
     title="Dark Forest Adventure" \
