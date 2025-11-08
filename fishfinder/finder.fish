@@ -4,7 +4,7 @@
 # It allows navigation through directories and opening files with the default editor.
 
 # TODO:
-# If the file is exexutable, offer to run it vs edit it.
+# If the file is executable, offer to run it vs edit it.
 
 function fishfinder
     # Check for fzf

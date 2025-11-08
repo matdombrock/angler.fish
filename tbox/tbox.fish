@@ -1,5 +1,8 @@
 #! /usr/bin/env fish
 
+# TODO:
+# - Dont show back when in one category mode
+
 set base (dirname (realpath (status --current-filename)))
 source $base/../lib/dict.fish
 
