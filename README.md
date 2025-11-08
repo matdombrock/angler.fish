@@ -1,6 +1,6 @@
-# cooler.fish
-A collection of (mostly) disconnected small Fish shell programs
+# tacklebox.fish
 
+A collection of (mostly) disconnected small Fish shell programs
 
 ## Aliases
 
@@ -15,11 +15,13 @@ source alias.sh
 You use most tools in three ways.
 
 Set an alias:
+
 ```sh
 alias mytool='bash /path/to/mytool.sh'
 ```
 
 Or to have them source a function like:
+
 ```sh
 source /path/to/mytool.sh
 ```

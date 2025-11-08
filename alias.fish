@@ -6,8 +6,9 @@
 set base (dirname (realpath (status --current-filename)))
 
 alias :adv="$base/games/adv.fish"
-alias :seer="cd ($base/seer/seer.fish)"
-alias :finder="$base/fishfinder/finder.fish"
+alias :fishfinder="cd ($base/fishfinder/finder.fish)"
+alias :ff="cd ($base/fishfinder/finder.fish)"
+alias :tbox="$base/tbox/tbox.fish"
 alias :fishfish="$base/fishfish/fish.fish"
 
 echo set aliased:
