@@ -72,7 +72,7 @@ end
 set cmd_path $base/tbox_commands.fish
 # Check if we have a TBOX_CMD_PATH env var
 if set -q TBOX_CMD_PATH
-    echo overriding command path with $TBOX_CMD_PATH
+    # echo overriding command path with $TBOX_CMD_PATH
     set cmd_path $TBOX_CMD_PATH
 end
 # Check if command file exists
