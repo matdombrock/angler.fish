@@ -4,6 +4,13 @@ A collection of (mostly) disconnected small `fish` shell programs for avid angle
 
 ![angler fish](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Lophius_piscatorius_MHNT.jpg/2880px-Lophius_piscatorius_MHNT.jpg)
 
+## Programs
+
+### [FishFinder](/fishfinder)
+### [FishFish](/fishfish)
+### [Games](/games)
+### [Reel](/reel)
+
 ## Aliases
 
 You can add aliases for most of the useful programs here by running:
