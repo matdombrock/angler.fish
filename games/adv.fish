@@ -252,6 +252,14 @@ function scene
     end
     # Get input
     set choice (input.char "$(set_color bryellow)Choose an option: ")
+    # Check for quit
+    if test $choice = q -o $choice = quit
+        clear
+        set_color --bold green
+        echo "Thanks for playing!"
+        input.char ""
+        exit 0
+    end
     # Check if we have a number
     if not string match -qr '^[0-9]+$' $choice
         set choice 99 # Invalid choice
