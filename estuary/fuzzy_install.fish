@@ -39,4 +39,6 @@ end
 
 if not test "$_" = source
     $mode $query
+else
+    functions --erase fuzzy_pacman
 end
