@@ -1,1 +1,1 @@
-echo (ps -A | fzf | string split ' ')[2]
+echo (ps aux | fzf | string split ' ')[2]
