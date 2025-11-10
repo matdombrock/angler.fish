@@ -35,7 +35,9 @@ function fishfinder
 "'
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
         --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
-        --bind=right:accept
+        --bind=right:accept \
+        --bind=ctrl-v:'execute(echo view:{} >> /tmp/ff_special_exit)+abort' \
+        --bind=ctrl-p:'execute(echo print:{} >> /tmp/ff_special_exit)+abort'
 
     set exit_msg '📁 exit'
     set home_msg '~/'
@@ -57,7 +59,28 @@ function fishfinder
     end
 
     # Get the selection
+    # We use a temp file to handle special exit commands
+    set special_exit_path /tmp/ff_special_exit
+    rm -f $special_exit_path
     set sel (ls+ $exit_msg $home_msg $up_msg | fzf $fzf_options)
+    # Check if a special exit command was written
+    if test -f $special_exit_path
+        set sel (cat $special_exit_path)
+        rm -f $special_exit_path
+    end
+
+    # Check if we got a special exit command
+    if test (string match "view:*" $sel)
+        set sel (string replace "view:" "" $sel)
+        set fv_cmd (string split ' ' $file_viewer)
+        $fv_cmd $sel
+        return
+    end
+    if test (string match "print:*" $sel)
+        set sel (string replace "print:" "" $sel)
+        echo $sel
+        return
+    end
 
     # Check if sel is null or empty
     if test -z "$sel"
