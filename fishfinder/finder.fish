@@ -85,7 +85,7 @@ fish -c "
 # Since we use the -F flag on ls we might have a trailing asterisk
 # For some reason (???) setting vars doesnt work here so we use a function instead
 function clean_sel
-  echo {} | sed \'s/[*\/]$//\'
+  echo {} | sed \'s/[*\/]\$//\'
 end
 if test -f (clean_sel); 
     echo (set_color --bold bryellow)file(set_color normal):
