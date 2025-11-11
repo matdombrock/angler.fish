@@ -1,7 +1,7 @@
 #! /usr/bin/env fish
 
 #
-# FishFinder is a terminal file explorer using fzf for selection and previewing files.
+# FishFinder is a terminal file explorer with fuzzy searching using fzf.
 #
 
 # Special keybindings in fzf:
