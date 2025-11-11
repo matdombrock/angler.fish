@@ -1,6 +1,6 @@
 # FishFinder
 
-FishFinder is a terminal file explorer using fzf for selection and previewing files.
+FishFinder is a terminal file explorer with fuzzy searching using fzf.
 
 # Modes:
 You can enter a special mode by sending an argument to fishfinder
@@ -19,4 +19,7 @@ You can enter a special mode by sending an argument to fishfinder
 - Alt-D:  Instantly delete the selected file or directory
 - Ctrl-R: Reload the current directory listing
 - : (colon): Execute a custom command on the selected file
+- Shift-Up Arrow: Scroll preview up
+- Shift-Down Arrow: Scroll preview down
+- CTRL-Q: Quit
 
