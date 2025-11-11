@@ -13,6 +13,8 @@
 # - Ctrl-D: Delete the selected file or directory with confirmation and reload
 # - Alt-D:  Delete the selected file or directory with confirmation and reload
 # - Ctrl-R: Reload the current directory listing
+# - Ctrl-X: Toggle explode mode (show all files recursively from current directory)
+# - : (colon): Execute a custom command on the selected file
 
 # TODO:
 # - More file operations: copy, move etc
@@ -103,11 +105,13 @@ end
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
         --bind=alt-d:"execute(rm -rf {})+reload(fish -c '$lsx_string; lsx')" \
-        --bind=ctrl-r:"reload(fish -c '$lsx_string; lsx')"
+        --bind=ctrl-r:"reload(fish -c '$lsx_string; lsx')" \
+        --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
 
     # --bind=ctrl-r:"reload(fish -c 'function xx; ls; end; xx')"
     # Ask if we want to keep finding
     function keep_finding
+        echo
         set confirm (input.char (set_color brcyan)">>> Keep finding? (y/n): ")
         if test $confirm = y
             fishfinder
@@ -194,6 +198,20 @@ end
             fishfinder
             return
         end
+    end
+
+    # Execute command on file
+    if test (string match "cmd:*" $sel)
+        set sel (string replace "cmd:" "" $sel)
+        set_color cyan
+        echo "Enter command $sel (use \$p as placeholder for '$sel'):"
+        set cmd (input.line "> " | string replace -a \$p $sel)
+        set_color bryellow
+        echo "> $cmd"
+        set_color normal
+        eval $cmd
+        keep_finding
+        return
     end
 
     #
