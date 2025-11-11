@@ -34,8 +34,11 @@ Commands are defined like this:
 ```sh
 add_cmd edit "edit nvim config" "cd ~/.config/nvim && nvim"
 add_cmd edit "edit fish config" "cd ~/.config/fish && nvim"
-add_cmd system "reload fish config" "source ~/.config/fish/config.fish"
+add_cmd file "list all files in pwd" "ls -A"
 ```
+
+> [!NOTE]
+> The commands run in a new session. So things like changing directories (`cd`) and setting environmental variables work, but will not persist in the parent shell session.
 
 ### Command Syntax
 
@@ -43,7 +46,7 @@ add_cmd system "reload fish config" "source ~/.config/fish/config.fish"
 add_cmd [category] [description] [command]
 ```
 
->[!NOTE]
+>[!TIP]
 > If only one category is provided, the category selection is automatically skipped.
 
 ## Command Parameters
@@ -55,8 +58,13 @@ add_cmd test t1 "echo {##} {#}"
 add_cmd network "ssh local" "ssh $(whoami)@192.168.1.{#}"
 ```
 
-### Param Types
+### Parameter Types
 
 - required `{##}`
 - optional `{#}`
 - exploded `{...}`
+
+>[!NOTE]
+> There is no functional difference between optional and exploded commands. All commands are exploded. The exploded parameter type is just a hint to the end user. 
+> An optional or exploded parameter which is not given an argument will be set to an empty char ('').
+

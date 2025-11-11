@@ -11,7 +11,6 @@ add_cmd test t2 "echo {#}"
 add_cmd edit "edit nvim config" "cd ~/.config/nvim && nvim"
 add_cmd edit "edit fish config" "cd ~/.config/fish && nvim"
 
-add_cmd system "reload fish config" "source ~/.config/fish/config.fish"
 add_cmd system "list users" "cut -d: -f1 /etc/passwd"
 add_cmd system "list disks" lsblk
 add_cmd system "show date" date
