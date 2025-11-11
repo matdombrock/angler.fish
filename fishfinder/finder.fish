@@ -195,8 +195,13 @@ end
     # Handle print: Just print the file path
     if test (string match "print:*" $sel)
         set sel (string replace "print:" "" $sel)
-        echo $sel
-        write $sel $ff_lp_path
+        # if $sel is not file or dir use pwd
+        if not test -f $sel; and not test -d $sel
+            set sel (pwd)
+        end
+        set full_dir (echo (pwd)/$sel)
+        echo $full_dir
+        write $full_dir $ff_lp_path
         return
     end
 
