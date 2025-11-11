@@ -1,6 +1,6 @@
 # Fish FIsh
 
-![screenshot](docs/screenshot.png)
+![screenshot](doc/screenshot.png)
 
 Prints a random fish name and description
 
