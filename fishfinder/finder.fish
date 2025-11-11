@@ -34,6 +34,8 @@ function fishfinder
         echo "This program requires `fzf`!" && exit 1
     end
 
+    set ff_lp_path /tmp/ff_lp
+
     # Define special messages
     # NOTE: If the icons dont show, you need to use a nerd font in your terminal
     set exit_msg ' exit'
@@ -121,6 +123,7 @@ end
             fishfinder
         else
             echo (pwd)
+            echo (pwd) >$ff_lp_path
         end
     end
 
@@ -225,12 +228,14 @@ end
     # Check if sel is null or empty
     if test -z "$sel"
         echo (pwd)
+        echo (pwd) >$ff_lp_path
         return
     end
 
     # Handle exit
     if test "$sel" = "$exit_msg"
         echo (pwd)
+        echo (pwd) >$ff_lp_path
         return
     end
 
