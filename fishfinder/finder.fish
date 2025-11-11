@@ -31,7 +31,7 @@ function fishfinder
 
     # Define special messages
     set exit_msg '📁 exit'
-    set home_msg '🏠 ~/'
+    set home_msg '🏠 home'
     set up_msg '🔼 .. up'
     set explode_msg '💥 explode'
     set unexplode_msg '💥 unexplode'
@@ -41,24 +41,21 @@ function fishfinder
     set lsx_string '\
 function lsx
     # Since these vars should not be global, we must pass them as args
-    set exit_msg $argv[1]
-    set home_msg $argv[2]
-    set up_msg $argv[3]
-    set explode_mode $argv[4]
+    set explode_mode $argv[1]
     set_color yellow
-    echo $exit_msg
+    echo '$exit_msg'
     if test "$explode_mode" = explode
         set_color yellow
         echo '$unexplode_msg'
         set_color normal
-        find (pwd) -type f
+        find (pwd) -type f 2>/dev/null | sed "s|^$(pwd)/||"
         return
     end
     set_color yellow
-    echo $home_msg
+    echo '$home_msg'
     echo '$explode_msg'
     set_color green
-    echo $up_msg
+    echo '$up_msg'
     set_color normal
     ls --group-directories-first -A1
 end'
@@ -90,19 +87,17 @@ end
     set special_exit_path /tmp/ff_special_exit
 
     # Set up fzf options
-    # We can make a full lsx string to reload the listing
-    set lsx_string_full "$lsx_string && lsx \"$exit_msg\" \"$home_msg\" \"$up_msg\""
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
         --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
-        --bind=ctrl-x:"reload($lsx_string_full explode)" \
+        --bind=ctrl-x:"reload($lsx_string explode)" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
-        --bind=alt-d:"execute(rm -rf {})+reload($lsx_string_full)" \
-        --bind=ctrl-r:"reload($lsx_string_full)"
+        --bind=alt-d:"execute(rm -rf {})+reload($lsx_string)" \
+        --bind=ctrl-r:"reload($lsx_string)"
 
     # Ask if we want to keep finding
     function keep_finding
@@ -116,7 +111,7 @@ end
 
     # Get the selection
     rm -f $special_exit_path
-    set sel (lsx $exit_msg $home_msg $up_msg $argv[1] | fzf $fzf_options)
+    set sel (lsx $argv[1] | fzf $fzf_options)
 
     # Check if a special exit command was written
     # If so, read it to $sel and delete the file
