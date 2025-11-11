@@ -32,7 +32,7 @@ function fishfinder
     # Define special messages
     set exit_msg '📁 exit'
     set home_msg '🏠 home'
-    set up_msg '🔼 .. up'
+    set up_msg '🔙 .. up'
     set explode_msg '💥 explode'
     set unexplode_msg '💥 unexplode'
 
@@ -57,7 +57,7 @@ function lsx
     set_color green
     echo '$up_msg'
     set_color normal
-    ls --group-directories-first -A1
+    ls --group-directories-first -A1 -F --color=always 2>/dev/null
 end'
     # We also use the `lsx` function outside of fzf
     # We can use eval to define it as a literal function `lsx` the current context
