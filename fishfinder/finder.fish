@@ -4,15 +4,21 @@
 # FishFinder is a terminal file explorer with fuzzy searching using fzf.
 #
 
-# Special keybindings in fzf:
+# Modes:
+# You can enter a special mode by sending an argument to fishfinder
+# - No argument: Normal mode, shows files and directories in current directory
+# - explode: Shows all files recursively from current directory
+# - l: Last path mode, echoes the last selected path from fishfinder and exits
+
+# Keybinds:
 # - Right Arrow: Enter directory or select file
 # - Left Arrow: Go up one directory
-# - Ctrl-V: View file or directory listing and exit
+# - Ctrl-V: View file or directory listing
 # - Ctrl-P: Print the selected file path and exit
-# - Ctrl-E: Execute the selected file if it is executable and exit
+# - Ctrl-E: Execute the selected file
 # - Ctrl-X: Toggle explode mode (show all files recursively from current directory)
-# - Ctrl-D: Delete the selected file or directory with confirmation and reload
-# - Alt-D:  Delete the selected file or directory with confirmation and reload
+# - Ctrl-D: Delete the selected file or directory with confirmation
+# - Alt-D:  Instantly delete the selected file or directory
 # - Ctrl-R: Reload the current directory listing
 # - : (colon): Execute a custom command on the selected file
 
@@ -29,9 +35,25 @@
 source (dirname (realpath (status --current-filename)))/../lib/input.fish
 
 function fishfinder
+
+    set mode $argv[1]
+
     # Check for fzf
     if not type -q fzf
         echo "This program requires `fzf`!" && exit 1
+    end
+
+    set ff_lp_path /tmp/ff_lp
+    if test -d "$TMPDIR"
+        set ff_lp_path $TMPDIR/ff_lp
+    end
+
+    # If we have 'l' mode just echo last path
+    if test "$mode" = l
+        if test -f $ff_lp_path
+            cat $ff_lp_path
+        end
+        return
     end
 
     # Define special messages
@@ -115,10 +137,7 @@ end
 
     # Write the path to tmp
     function write_lp
-        set ff_lp_path /tmp/ff_lp
-        if test -d "$TMPDIR"
-            set ff_lp_path $TMPDIR/ff_lp
-        end
+        set ff_lp_path $argv[1]
         pwd >$ff_lp_path
     end
 
@@ -129,13 +148,13 @@ end
         if test $confirm = y
             fishfinder
         else
-            write_lp
+            write_lp $ff_lp_path
         end
     end
 
     # Get the selection
     rm -f $special_exit_path
-    set sel (lsx $argv[1] | fzf $fzf_options)
+    set sel (lsx $mode | fzf $fzf_options)
 
     # Check if a special exit command was written
     # If so, read it to $sel and delete the file
@@ -233,13 +252,13 @@ end
 
     # Check if sel is null or empty
     if test -z "$sel"
-        write_lp
+        write_lp $ff_lp_path
         return
     end
 
     # Handle exit
     if test "$sel" = "$exit_msg"
-        write_lp
+        write_lp $ff_lp_path
         return
     end
 
@@ -299,5 +318,5 @@ end
 
 # Run FishFinder if the script is being executed directly
 if not test "$_" = source
-    fishfinder
+    fishfinder $argv
 end
