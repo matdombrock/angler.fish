@@ -1,9 +1,9 @@
 # [angler](https://en.wikipedia.org/wiki/Angling).[fish](https://en.wikipedia.org/wiki/Anglerfish)
-> Image: Average angler.fish user
 
 A collection of (mostly) disconnected small `fish` shell programs for avid anglers.
 
 ![angler fish](_doc/anglerfish.png)
+> Image: Average angler.fish user
 
 ## Programs
 
