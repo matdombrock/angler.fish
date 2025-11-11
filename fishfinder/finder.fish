@@ -15,8 +15,9 @@
 # - Ctrl-R: Reload the current directory listing
 
 # TODO:
-# - If the file is executable, offer to run it vs edit it.
-# - Its not possible to leave the shell in the final dir
+# - More file operations: copy, move etc
+# - `explode` mode which does something like `find (pwd) -type f | fzf` 
+# - Its not possible to automatically cd the parent session into the selected directory
 #   You can do something like `cd (fishfinder)` from the shell but that breaks editing files
 #   You can also source this file which allows both cd and editing
 
