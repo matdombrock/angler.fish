@@ -30,11 +30,12 @@ function fishfinder
     end
 
     # Define special messages
-    set exit_msg '📁 exit'
-    set home_msg '🏠 home'
-    set up_msg '🔙 .. up'
-    set explode_msg '💥 explode'
-    set unexplode_msg '💥 unexplode'
+    # NOTE: If the icons dont show, you need to use a nerd font in your terminal
+    set exit_msg ' exit'
+    set home_msg ' home'
+    set up_msg ' .. up'
+    set explode_msg ' explode'
+    set unexplode_msg ' unexplode'
 
     # Passing functions from our script into fzf is tricky
     # The easiest way is to define them as strings and eval them inside fzf
@@ -48,6 +49,7 @@ function lsx
         set_color yellow
         echo '$unexplode_msg'
         set_color normal
+        echo
         find (pwd) -type f 2>/dev/null | sed "s|^$(pwd)/||"
         return
     end
@@ -57,6 +59,7 @@ function lsx
     set_color green
     echo '$up_msg'
     set_color normal
+    echo
     ls --group-directories-first -A1 -F --color=always 2>/dev/null
 end'
     # We also use the `lsx` function outside of fzf
@@ -119,7 +122,14 @@ end
         set sel (cat $special_exit_path)
         rm -f $special_exit_path
     end
-    # Check if we got a special exit command
+
+    # Since we use the -F flag on ls we might have a trailing asterisk
+    set sel (echo $sel | sed 's/[*\/]$//')
+
+    #
+    # Check for special exit commands
+    #
+
     # Move up directory
     if test (string match "up:*" $sel)
         cd ..
@@ -173,6 +183,10 @@ end
         end
     end
 
+    #
+    # Handle normal commands
+    #
+
     # Check if sel is null or empty
     if test -z "$sel"
         echo (pwd)
@@ -209,7 +223,10 @@ end
         fishfinder
     end
 
+    #
     # Handle file or directory
+    #
+
     if test -d "$sel"
         # This is a directory
         cd $sel
