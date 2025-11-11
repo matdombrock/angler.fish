@@ -10,9 +10,6 @@
 # - Operation to execute a command on the selected file (maybe map `:` to this?, use {} as file placeholder)
 # - Option to execute with args, maybe should be the default for exec?
 #   Could drop to > [cmd] ...
-# - Its not possible to automatically cd the parent session into the selected directory
-#   You can do something like `cd (fishfinder)` from the shell but that breaks editing files
-#   You can also source this file which allows both cd and editing
 
 source (dirname (realpath (status --current-filename)))/../lib/input.fish
 
@@ -25,12 +22,14 @@ function fishfinder
         echo "This program requires `fzf`!" && exit 1
     end
 
+    # Define path to last path file
+    # NOTE: Some systems may not have /tmp so use $TMPDIR if set
     set ff_lp_path /tmp/ff_lp
     if test -d "$TMPDIR"
         set ff_lp_path $TMPDIR/ff_lp
     end
 
-    # If we have 'l' mode just echo last path
+    # If we have 'l' mode just echo last path and exit
     if test "$mode" = l
         if test -f $ff_lp_path
             cat $ff_lp_path
@@ -48,7 +47,7 @@ function fishfinder
 
     # Passing functions from our script into fzf is tricky
     # The easiest way is to define them as strings and eval them inside fzf
-    set lsx_string '\
+    set lsx_fn '\
 function lsx
     # Since these vars should not be global, we must pass them as args
     set explode_mode $argv[1]
@@ -73,7 +72,7 @@ function lsx
 end'
     # We also use the `lsx` function outside of fzf
     # We can use eval to define it as a literal function `lsx` the current context
-    eval $lsx_string
+    eval $lsx_fn
 
     # Set the fzf preview command
     # Force this to use fish or it will use the default shell which may not be fish
@@ -82,7 +81,7 @@ end'
     if type -q bat
         set file_viewer 'bat --plain --color=always'
     end
-    set fzf_preview '\
+    set fzf_preview_fn '\
 fish -c "
 # Since we use the -F flag on ls we might have a trailing asterisk
 # For some reason (???) setting vars doesnt work here so we use a function instead
@@ -105,16 +104,16 @@ end
 
     # Set up fzf options
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
-        --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
+        --preview="$fzf_preview_fn {}" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
-        --bind=ctrl-x:"reload(fish -c '$lsx_string; lsx explode')" \
+        --bind=ctrl-x:"reload(fish -c '$lsx_fn; lsx explode')" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
-        --bind=alt-d:"execute(rm -rf {})+reload(fish -c '$lsx_string; lsx')" \
-        --bind=ctrl-r:"reload(fish -c '$lsx_string; lsx')" \
+        --bind=alt-d:"execute(rm -rf {})+reload(fish -c '$lsx_fn; lsx')" \
+        --bind=ctrl-r:"reload(fish -c '$lsx_fn; lsx')" \
         --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
 
     # Write the path to tmp
@@ -148,18 +147,24 @@ end
     # Since we use the -F flag on ls we might have a trailing asterisk
     set sel (echo $sel | sed 's/[*\/]$//')
 
+    # Check if sel is null or empty
+    if test -z "$sel"
+        write_lp $ff_lp_path
+        return
+    end
+
     #
     # Check for special exit commands
     #
 
-    # Move up directory
+    # Handle up: Move up directory
     if test (string match "up:*" $sel)
         cd ..
         fishfinder
         return
     end
 
-    # Just view the file / directory
+    # Handle view: Just view the file / directory
     if test (string match "view:*" $sel)
         set sel (string replace "view:" "" $sel)
         if test -d "$sel"
@@ -179,14 +184,14 @@ end
         end
     end
 
-    # Just print the file path
+    # Handle print: Just print the file path
     if test (string match "print:*" $sel)
         set sel (string replace "print:" "" $sel)
         echo $sel
         return
     end
 
-    # Execute the file if executable
+    # Handle exec: Execute the file if executable
     if test (string match "exec:*" $sel)
         set sel (string replace "exec:" "" $sel)
         if test -x $sel
@@ -198,7 +203,7 @@ end
         return
     end
 
-    # Delete the file
+    # Handle del: Delete the file
     if test (string match "del:*" $sel)
         set sel (string replace "del:" "" $sel)
         set confirm (input.char "delete $sel? (y/n): ")
@@ -214,7 +219,7 @@ end
         end
     end
 
-    # Execute command on file
+    # Handle cmd: Execute command on file
     if test (string match "cmd:*" $sel)
         set sel (string replace "cmd:" "" $sel)
         set_color cyan
@@ -231,12 +236,6 @@ end
     #
     # Handle normal commands
     #
-
-    # Check if sel is null or empty
-    if test -z "$sel"
-        write_lp $ff_lp_path
-        return
-    end
 
     # Handle exit
     if test "$sel" = "$exit_msg"

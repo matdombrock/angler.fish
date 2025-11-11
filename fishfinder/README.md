@@ -8,6 +8,13 @@ You can enter a special mode by sending an argument to fishfinder
 - explode: Shows all files recursively from current directory
 - l: Last path mode, echoes the last selected path from fishfinder and exits
 
+> [!TIP]
+> To enter the final directory on exit use:
+> ```sh
+> fishfinder
+> cd (fishfinder l)
+> ```
+
 # Keybinds:
 - Right Arrow: Enter directory or select file
 - Left Arrow: Go up one directory
