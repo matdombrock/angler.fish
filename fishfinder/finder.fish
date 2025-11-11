@@ -16,7 +16,10 @@
 
 # TODO:
 # - More file operations: copy, move etc
-# - `explode` mode which does something like `find (pwd) -type f | fzf` 
+# - Operation for `xdg-open` for viewing files with default applications
+# - Operation to execute a command on the selected file (maybe map `:` to this?, use {} as file placeholder)
+# - Option to execute with args, maybe should be the default for exec?
+#   Could drop to > [cmd] ...
 # - Its not possible to automatically cd the parent session into the selected directory
 #   You can do something like `cd (fishfinder)` from the shell but that breaks editing files
 #   You can also source this file which allows both cd and editing
