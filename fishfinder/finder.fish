@@ -96,15 +96,16 @@ end
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
         --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
-        --bind=ctrl-x:"reload($lsx_string explode)" \
+        --bind=ctrl-x:"reload(fish -c '$lsx_string; lsx explode')" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
-        --bind=alt-d:"execute(rm -rf {})+reload($lsx_string)" \
-        --bind=ctrl-r:"reload($lsx_string)"
+        --bind=alt-d:"execute(rm -rf {})+reload(fish -c '$lsx_string; lsx')" \
+        --bind=ctrl-r:"reload(fish -c '$lsx_string; lsx')"
 
+    # --bind=ctrl-r:"reload(fish -c 'function xx; ls; end; xx')"
     # Ask if we want to keep finding
     function keep_finding
         set confirm (input.char (set_color brcyan)">>> Keep finding? (y/n): ")
