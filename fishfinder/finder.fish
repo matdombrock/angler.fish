@@ -140,9 +140,15 @@ end
         fishfinder
         return
     end
+
     # Just view the file / directory
     if test (string match "view:*" $sel)
         set sel (string replace "view:" "" $sel)
+        if not test -f $sel
+            # The user has likely selected a meta option by mistake
+            fishfinder
+            return
+        end
         if test -d "$sel"
             # This is a directory
             ls -A $sel
@@ -154,12 +160,14 @@ end
         keep_finding
         return
     end
+
     # Just print the file path
     if test (string match "print:*" $sel)
         set sel (string replace "print:" "" $sel)
         echo $sel
         return
     end
+
     # Execute the file if executable
     if test (string match "exec:*" $sel)
         set sel (string replace "exec:" "" $sel)
@@ -171,6 +179,7 @@ end
         keep_finding
         return
     end
+
     # Delete the file
     if test (string match "del:*" $sel)
         set sel (string replace "del:" "" $sel)
