@@ -7,9 +7,11 @@
 # TODO:
 # - More file operations: copy, move etc
 # - Operation for `xdg-open` for viewing files with default applications
-# - Operation to execute a command on the selected file (maybe map `:` to this?, use {} as file placeholder)
 # - Option to execute with args, maybe should be the default for exec?
 #   Could drop to > [cmd] ...
+# - This is becoming hard to maintain
+#   It may be easier if implemented in a way that cant be sourced cleanly
+#   In other words, not as a single top level function
 
 source (dirname (realpath (status --current-filename)))/../lib/input.fish
 
@@ -116,20 +118,22 @@ end
         --bind=ctrl-r:"reload(fish -c '$lsx_fn; lsx')" \
         --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
 
-    # Write the path to tmp
-    function write_lp
-        set ff_lp_path $argv[1]
-        pwd >$ff_lp_path
+    # Write data to path
+    function write
+        set -l data $argv[1]
+        set -l path $argv[2]
+        echo $data >$path
     end
 
     # Ask if we want to keep finding
     function keep_finding
+        set -l ff_lp_path argv[1]
         echo
-        set confirm (input.char (set_color brcyan)">>> Keep finding? (y/n): ")
-        if test $confirm = y
+        set -l confirm (input.char (set_color brcyan)">>> Keep finding? (Y/n): ")
+        if test $confirm = y; or test $confirm = Y; or test $confirm = ''
             fishfinder
         else
-            write_lp $ff_lp_path
+            write (pwd) $ff_lp_path
         end
     end
 
@@ -149,7 +153,7 @@ end
 
     # Check if sel is null or empty
     if test -z "$sel"
-        write_lp $ff_lp_path
+        write (pwd) $ff_lp_path
         return
     end
 
@@ -170,16 +174,16 @@ end
         if test -d "$sel"
             # This is a directory
             ls -l -A $sel
-            keep_finding
+            keep_finding $ff_lp_path
             return
         else if test -f $sel
             set fv_cmd (string split ' ' $file_viewer)
             $fv_cmd $sel
-            keep_finding
+            keep_finding $ff_lp_path
             return
         else
             # The user has likely selected a meta option by mistake
-            fishfinder
+            fishfinder $ff_lp_path
             return
         end
     end
@@ -188,6 +192,7 @@ end
     if test (string match "print:*" $sel)
         set sel (string replace "print:" "" $sel)
         echo $sel
+        write $sel $ff_lp_path
         return
     end
 
@@ -199,7 +204,7 @@ end
         else
             echo "$sel is not executable."
         end
-        keep_finding
+        keep_finding $ff_lp_path
         return
     end
 
@@ -229,7 +234,7 @@ end
         echo "> $cmd"
         set_color normal
         eval $cmd
-        keep_finding
+        keep_finding $ff_lp_path
         return
     end
 
@@ -239,7 +244,7 @@ end
 
     # Handle exit
     if test "$sel" = "$exit_msg"
-        write_lp $ff_lp_path
+        write (pwd) $ff_lp_path
         return
     end
 
@@ -281,17 +286,17 @@ end
         if set -q VISUAL
             echo "Opening file with VISUAL editor: $VISUAL"
             $VISUAL $sel
-            keep_finding
+            keep_finding $ff_lp_path
             return
         else if set -q EDITOR
             echo "Opening file with EDITOR: $EDITOR"
             $EDITOR $sel
-            keep_finding
+            keep_finding $ff_lp_path
             return
         else
             echo "No editor set. Opening file with 'less'."
             less $sel
-            keep_finding
+            keep_finding $ff_lp_path
             return
         end
     end

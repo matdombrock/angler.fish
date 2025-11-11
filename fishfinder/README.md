@@ -9,7 +9,8 @@ You can enter a special mode by sending an argument to fishfinder
 - l: Last path mode, echoes the last selected path from fishfinder and exits
 
 > [!TIP]
-> To enter the final directory on exit use:
+> When this program exists it will write a temporary file that contains the last selected path.
+> You can retrieve this path with `fishfinder l`:
 > ```sh
 > fishfinder
 > cd (fishfinder l)
