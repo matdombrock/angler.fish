@@ -81,14 +81,16 @@ end'
     set fzf_preview '\
 fish -c "
 # Since we use the -F flag on ls we might have a trailing asterisk
-  set sel (echo {} | sed \'s/[*\/]$//\')
-  echo sel:$sel
-if test -f (echo {} | sed \'s/[*\/]$//\'); 
+# For some reason (???) setting vars doesnt work here so we use a function instead
+function clean
+  echo {} | sed \'s/[*\/]$//\'
+end
+if test -f (clean); 
     echo (set_color --bold bryellow)file(set_color normal):
-    '$file_viewer' (echo {} | sed \'s/[*\/]$//\'); 
-else if test -d (echo {} | sed \'s/[*\/]$//\'); 
+    '$file_viewer' (clean); 
+else if test -d (clean); 
     echo (set_color --bold brred)directory(set_color normal):
-    ls -A (echo {} | sed \'s/[*\/]$//\'); 
+    ls -A (clean); 
 else; 
     echo \"Not a file or directory\"; 
 end
@@ -206,7 +208,7 @@ end
     if test (string match "cmd:*" $sel)
         set sel (string replace "cmd:" "" $sel)
         set_color cyan
-        echo "Enter command $sel (use \$p as placeholder for '$sel'):"
+        echo "Enter command (use \$p as placeholder for '$sel'):"
         set cmd (input.line "> " | string replace -a \$p $sel)
         set_color bryellow
         echo "> $cmd"
