@@ -34,7 +34,7 @@ function fishfinder
         echo "This program requires `fzf`!" && exit 1
     end
 
-    set ff_lp_path /tmp/ff_lp
+    set ff_lp_path $TMPDIR/ff_lp
 
     # Define special messages
     # NOTE: If the icons dont show, you need to use a nerd font in your terminal
