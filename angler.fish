@@ -10,8 +10,6 @@ if test "$_" = source
     # Launch FishFinder (fuzzy file explorer)
     alias :fishfinder="$base/fishfinder/finder.fish"
     alias :ff="$base/fishfinder/finder.fish"
-    # Echo last FishFinder path
-    alias :ffl=":ff l"
     # Launch fish finder and go to the final dir
     alias :ffg=":ff && cd ($base/fishfinder/finder.fish l)"
     # Demo TackleBox
