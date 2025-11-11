@@ -31,8 +31,10 @@ function fishfinder
 
     # Define special messages
     set exit_msg '📁 exit'
-    set home_msg '~/'
-    set up_msg '.. up'
+    set home_msg '🏠 ~/'
+    set up_msg '🔼 .. up'
+    set explode_msg '💥 explode'
+    set unexplode_msg '💥 unexplode'
 
     # Passing functions from our script into fzf is tricky
     # The easiest way is to define them as strings and eval them inside fzf
@@ -42,9 +44,19 @@ function lsx
     set exit_msg $argv[1]
     set home_msg $argv[2]
     set up_msg $argv[3]
+    set explode_mode $argv[4]
     set_color yellow
     echo $exit_msg
+    if test "$explode_mode" = explode
+        set_color yellow
+        echo '$unexplode_msg'
+        set_color normal
+        find (pwd) -type f
+        return
+    end
+    set_color yellow
     echo $home_msg
+    echo '$explode_msg'
     set_color green
     echo $up_msg
     set_color normal
@@ -83,6 +95,7 @@ end
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
         --preview="$fzf_preview {}" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
+        --bind=ctrl-x:"reload($lsx_string_full explode)" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
@@ -103,7 +116,7 @@ end
 
     # Get the selection
     rm -f $special_exit_path
-    set sel (lsx $exit_msg $home_msg $up_msg | fzf $fzf_options)
+    set sel (lsx $exit_msg $home_msg $up_msg $argv[1] | fzf $fzf_options)
 
     # Check if a special exit command was written
     # If so, read it to $sel and delete the file
@@ -189,6 +202,16 @@ end
         cd ..
         fishfinder
         return
+    end
+
+    # Handle explode
+    if test "$sel" = "$explode_msg"
+        fishfinder explode
+    end
+
+    # Handle unexplode
+    if test "$sel" = "$unexplode_msg"
+        fishfinder
     end
 
     # Handle file or directory
