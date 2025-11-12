@@ -6,6 +6,52 @@
 
 source (dirname (realpath (status --current-filename)))/../_lib/input.fish
 
+# We use a temp file to handle special exit commands
+set special_exit_path /tmp/ff_special_exit
+# NOTE: Some systems may not have /tmp so use $TMPDIR if set
+if test -d "$TMPDIR"
+    set special_exit_path $TMPDIR/ff_special_exit
+end
+
+set ff_kb
+function kb
+    set -l action_id $argv[1]
+    set -l input $argv[2]
+    set -l action ''
+    if test $action_id = accept
+        set action accept
+    else if test $action_id = abort
+        set action abort
+    else if test $action_id = up
+        set action "execute(echo 'up:' >> $special_exit_path)+abort"
+    else if test $action_id = explode
+        set action "execute(echo 'explode:' >> $special_exit_path)+abort"
+    else if test $action_id = view
+        set action "execute(echo view:$bind >> $special_exit_path)+abort"
+    else if test $action_id = goto
+        set action "execute(echo goto: >> $special_exit_path)+abort"
+    else if test $action_id = last
+        set action "execute(echo last: >> $special_exit_path)+abort"
+    else if test $action_id = print
+        set action "execute(echo print:$bind >> $special_exit_path)+abort"
+    else if test $action_id = exec
+        set action "execute(echo exec:$bind >> $special_exit_path)+abort"
+    else if test $action_id = open
+        set action "execute(echo open:$bind >> $special_exit_path)+abort"
+    else if test $action_id = copy
+        set action "execute(echo copy:$bind >> $special_exit_path)+abort"
+    else if test $action_id = del
+        set action "execute(echo del:$bind >> $special_exit_path)+abort"
+    else if test $action_id = reload
+        set action "execute(echo reload: >> $special_exit_path)+abort"
+    else if test $action_id = cmd
+        set action "execute(echo cmd:$bind >> $special_exit_path)+abort"
+    end
+    set ff_kb $ff_kb --bind="$input:$action"
+end
+
+source (dirname (realpath (status --current-filename)))/keybinds.fish
+
 function fishfinder
 
     # Parse arguments
@@ -189,35 +235,16 @@ end
         set ff_lp_path $TMPDIR/ff_lp
     end
 
-    # We use a temp file to handle special exit commands
-    set special_exit_path /tmp/ff_special_exit
-    # NOTE: Some systems may not have /tmp so use $TMPDIR if set
-    if test -d "$TMPDIR"
-        set special_exit_path $TMPDIR/ff_special_exit
-    end
-
     # Set up fzf options
-    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border \
-        --preview="$fzf_preview_fn" --preview-window=right:60%:wrap \
-        --bind=right:"accept" \
-        --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
-        --bind=ctrl-x:"execute(echo 'explode:' >> $special_exit_path)+abort" \
-        --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
-        --bind=ctrl-g:"execute(echo goto: >> $special_exit_path)+abort" \
-        --bind=ctrl-l:"execute(echo last: >> $special_exit_path)+abort" \
-        --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
-        --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
-        --bind=ctrl-o:"execute(echo open:{} >> $special_exit_path)+abort" \
-        --bind=ctrl-y:"execute(echo copy:{} >> $special_exit_path)+abort" \
-        --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
-        --bind=alt-d:"execute(rm -rf {})+execute(echo reload: >> $special_exit_path)+abort" \
-        --bind=ctrl-r:"execute(echo reload: >> $special_exit_path)+abort" \
-        --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
+    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border --preview="$fzf_preview_fn" --preview-window=right:60%:wrap
 
     # If we need to specify shell for fzf, do so
     if test $fzf_with_shell = true
         set fzf_options $fzf_options --with-shell "fish -c"
     end
+
+    # Attach keybinds
+    set fzf_options $fzf_options $ff_kb
 
     #
     # Start the main logic

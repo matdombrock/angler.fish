@@ -1,0 +1,14 @@
+kb accept enter
+kb accept right
+kb up left
+kb explode ctrl-x
+kb view ctrl-v
+kb goto ctrl-g
+kb last ctrl-l
+kb print ctrl-p
+kb exec ctrl-e
+kb open ctrl-o
+kb copy ctrl-y
+kb del ctrl-d
+kb reload ctrl-r
+kb cmd ':'
