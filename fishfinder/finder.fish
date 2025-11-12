@@ -74,9 +74,10 @@ function fishfinder
         set -l fl_minimal $argv[2]
         set -l exit_str $argv[3]
         set -l goto_str $argv[4]
-        set -l up_str $argv[5]
-        set -l explode_str $argv[6]
-        set -l unexplode_str $argv[7]
+        set -l back_str $argv[5]
+        set -l up_str $argv[6]
+        set -l explode_str $argv[7]
+        set -l unexplode_str $argv[8]
         echo_not $fl_minimal "$(set_color -usingle brred)$exit_str"
         if test "$fl_explode" = true
             echo_not $fl_minimal "$(set_color -usingle bryellow)$unexplode_str"
@@ -86,6 +87,7 @@ function fishfinder
         end
         echo_not $fl_minimal "$(set_color -usingle bryellow)$explode_str"
         echo_not $fl_minimal "$(set_color -usingle brgreen)$goto_str"
+        echo_not $fl_minimal "$(set_color -usingle brmagenta)$back_str"
         echo_not $fl_minimal "$(set_color -usingle brcyan)$up_str"
         set_color normal
         ls --group-directories-first -A1 -F --color=always 2>/dev/null
@@ -95,6 +97,7 @@ function fishfinder
     # NOTE: If the icons dont show, you need to use a nerd font in your terminal
     set exit_str ' exit'
     set goto_str '󰁕 goto'
+    set back_str ' back'
     set up_str ' .. up'
     set explode_str ' explode'
     set unexplode_str ' unexplode'
@@ -121,6 +124,8 @@ if test {} = "'$exit_str'";
     tip "Exit back to the shell"; 
 else if test {} = "'$goto_str'"; 
     tip "Go to a directory (cd)"; 
+else if test {} = "'$back_str'"; 
+    tip "Go back to previous directory (cd -)";
 else if test {} = "'$up_str'"; 
     tip "Go up one directory (cd ..)"; 
 else if test {} = "'$explode_str'"; 
@@ -182,6 +187,7 @@ end
         --bind=ctrl-x:"execute(echo 'explode:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
         --bind=ctrl-g:"execute(echo goto: >> $special_exit_path)+abort" \
+        --bind=ctrl-l:"execute(echo last: >> $special_exit_path)+abort" \
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
@@ -208,15 +214,19 @@ end
     # Draw the header area
     clear
     set width (tput cols)
-    set art_width 12
+    set art_width 20
     set padding (math floor (math "($width - $art_width) / 2"))
-    set bg ░
-    set_color blue
+    set bg \~ # ░
+    set_color brmagenta
     for i in (seq $padding)
         echo -n $bg
     end
-    echo -n (set_color -r yellow)" FishFinder "(set_color normal)
-    set_color blue
+    echo -n (set_color yellow)"/ "
+    echo -n (set_color brwhite)"||"
+    echo -n (set_color brblue)" FishFinder "
+    echo -n (set_color brwhite)"||"
+    echo -n (set_color yellow)" \\"(set_color normal)
+    set_color brgreen
     for i in (seq $padding)
         echo -n $bg
     end
@@ -235,6 +245,7 @@ end
       $fl_minimal \
       $exit_str \
       $goto_str \
+      $back_str \
       $up_str \
       $explode_str \
       $unexplode_str \
@@ -391,6 +402,13 @@ end
     # Handle up directory
     if test "$sel" = "$up_str"; or test "$sel" = "up:"
         cd ..
+        fishfinder $fl_explode $fl_minimal
+        return
+    end
+
+    # Handle last: Just go back to fishfinder
+    if test "$sel" = "$back_str"; or test "$sel" = "last:"
+        cd -
         fishfinder $fl_explode $fl_minimal
         return
     end

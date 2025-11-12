@@ -30,11 +30,14 @@ You can enter a special mode by sending an argument to fishfinder
 > ```
 
 ## Keybinds
+- Enter: Enter diretory or select file
 - Right Arrow: Enter directory or select file
-- Left Arrow: Go up one directory
+- Left Arrow: Go up one directory (cd ..)
 - Ctrl-X: Toggle explode mode (show all files recursively from current directory)
 - Ctrl-V: View file or directory listing
 - Ctrl-P: Print the selected file path and exit
+- Ctrl-G: Go to a directory (cd)
+- Ctrl-L: Go back a directory (cd -)
 - Ctrl-E: Execute the selected file
 - Ctrl-D: Delete the selected file or directory with confirmation
 - Alt-D:  Instantly delete the selected file or directory
@@ -45,7 +48,7 @@ You can enter a special mode by sending an argument to fishfinder
 - CTRL-Q: Quit
 
 ## Goals
-- More file operations: copy, move etc
+- Back command to move to the most recent dir (cd -)
 - Operation for `xdg-open` for viewing files with default applications
     - Should also support `open` for macOS
 - Option to execute with args, maybe should be the default for exec?
