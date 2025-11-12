@@ -1,4 +1,6 @@
 add_cmd test optional "echo {#}"
+add_cmd test envvar "set VAR world; echo {#} \$VAR"
+add_cmd test envvarold "VAR=world echo {#} \$VAR"
 add_cmd test required "echo {##}"
 add_cmd test reqopt "echo {##} {#}"
 add_cmd test explode "echo {...}"

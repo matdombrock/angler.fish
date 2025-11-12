@@ -11,6 +11,9 @@
 set base (dirname (realpath (status --current-filename)))
 source $base/../_lib/dict.fish
 
+# Set the dict.delimiter to something unlikely to appear in commands
+dict.delimiter "===DICT_DELIM==="
+
 # Check for fzf
 if not type -q fzf
     echo "This program requires 'fzf'!"
