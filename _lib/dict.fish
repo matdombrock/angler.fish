@@ -5,9 +5,9 @@
 
 # Default delimiter between key and value
 set dict_delim "="
-# Set the delimiter between key and value
 # In some cases, you might want to use a different delimiter
 # for example if your values contain '=' characters
+# Set the delimiter between key and value
 function dict.delimiter
     set dict_delim $argv[1]
 end
