@@ -64,5 +64,4 @@ kb [action] [key]
 > See [fzf man page](https://www.mankier.com/1/fzf#Key/Event_Bindings-Available_Keys:_(Synonyms)) for a list of valid keys.
 
 ## Todo
-- Easy custom keybinds
 - Toggle hidden files
