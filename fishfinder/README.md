@@ -51,4 +51,4 @@ You can enter a special mode by sending an argument to fishfinder
 
 ## Todo
 - Easy custom keybinds
-
+- Toggle hidden files
