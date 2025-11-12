@@ -280,8 +280,11 @@ end
     # Guards against false positives
     rm -f $special_exit_path
 
+    # Reset the cursor position (faster than 'clear')
+    # We shouldnt need to clear at all because fzf handles that
+    printf "\033[H"
+
     # Draw the header area
-    clear
     set width (tput cols)
     set art_width 20
     set padding (math floor (math "($width - $art_width) / 2"))
