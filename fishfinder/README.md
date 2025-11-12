@@ -48,12 +48,8 @@ You can enter a special mode by sending an argument to fishfinder
 - CTRL-Q: Quit
 
 ## Goals
-- Back command to move to the most recent dir (cd -)
 - Operation for `xdg-open` for viewing files with default applications
     - Should also support `open` for macOS
 - Option to execute with args, maybe should be the default for exec?
     - Could drop to > [cmd] ...
-- This is becoming hard to maintain
-    - It may be easier if implemented in a way that cant be sourced cleanly
-    - In other words, not as a single top level function
 
