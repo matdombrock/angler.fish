@@ -3,7 +3,11 @@
 # Dictionaries look like this:
 # set -l dict1 name=Alice age=30 city=Paris
 
+# Default delimiter between key and value
 set dict_delim "="
+# Set the delimiter between key and value
+# In some cases, you might want to use a different delimiter
+# for example if your values contain '=' characters
 function dict.delimiter
     set dict_delim $argv[1]
 end
