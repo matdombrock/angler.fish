@@ -37,7 +37,7 @@ function fishfinder
     # Define special messages
     # NOTE: If the icons dont show, you need to use a nerd font in your terminal
     set exit_str ' exit'
-    set goto_str ' goto'
+    set goto_str '󰁕 goto'
     set up_str ' .. up'
     set explode_str ' explode'
     set unexplode_str ' unexplode'
@@ -124,8 +124,8 @@ end
         --bind=ctrl-p:"execute(echo print:{} >> $special_exit_path)+abort" \
         --bind=ctrl-e:"execute(echo exec:{} >> $special_exit_path)+abort" \
         --bind=ctrl-d:"execute(echo del:{} >> $special_exit_path)+abort" \
-        --bind=alt-d:"execute(rm -rf {})+reload(fish -c '$lsx_fn; lsx')" \
-        --bind=ctrl-r:"reload(fish -c '$lsx_fn; lsx')" \
+        --bind=alt-d:"execute(rm -rf {})+execute(echo reload: >> $special_exit_path)+abort" \
+        --bind=ctrl-r:"execute(echo reload: >> $special_exit_path)+abort" \
         --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
 
     #
@@ -159,7 +159,7 @@ end
 
     # Check if sel is null or empty
     if test -z "$sel"
-        write (pwd) $ff_lp_path/
+        write (pwd) $ff_lp_path
         return
     end
 
@@ -251,6 +251,12 @@ end
             set_color normal
             eval $cmd
         end
+        fishfinder
+        return
+    end
+
+    # Handle reload: Reload fishfinder
+    if test (string match "reload:*" $sel)
         fishfinder
         return
     end
