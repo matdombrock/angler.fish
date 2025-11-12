@@ -61,12 +61,12 @@ end
 
 # Check if we have an FF_KB environment variable
 # If so, load keybinds from there
-set ff_kb (dirname (realpath (status --current-filename)))/keybinds.fish
+set ff_kb_path (dirname (realpath (status --current-filename)))/keybinds.fish
 if test -n "$FF_KB"
-    set ff_kb $FF_KB
+    set ff_kb_path $FF_KB
 end
 # Load keybinds
-source $ff_kb
+source $ff_kb_path
 
 function fishfinder
 
