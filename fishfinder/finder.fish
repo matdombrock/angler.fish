@@ -71,26 +71,24 @@ source $ff_kb_path
 function fishfinder
 
     # Parse arguments
-    set fl_explode false
-    set fl_minimal false
-    set fl_last false
+    set flags explode=false minimal=false last=false
     for arg in $argv
         if test "$arg" = explode; or test "$arg" = e
-            set fl_explode true
+            set flags (dict.set explode true $flags)
         else if test "$arg" = minimal; or test "$arg" = m
-            set fl_minimal true
+            set flags (dict.set minimal true $flags)
         else if test "$arg" = last; or test "$arg" = l
-            set fl_last true
+            set flags (dict.set last true $flags)
         end
     end
     # We can also provide positional boolean args
     # This is mostly for internal use
     if test (count $argv) = 2
         if test "$argv[1]" = true; or test "$argv[1]" = false
-            set fl_explode $argv[1]
+            set flags (dict.set explode $argv[1] $flags)
         end
         if test "$argv[2]" = true; or test "$argv[2]" = false
-            set fl_minimal $argv[2]
+            set flags (dict.set minimal $argv[2] $flags)
         end
     end
 
@@ -127,12 +125,11 @@ function fishfinder
     # Ask if we want to keep finding
     function keep_finding
         set -l ff_lp_path $argv[1]
-        set -l fl_explode $argv[2]
-        set -l fl_minimal $argv[3]
+        set -l flags $argv[2..-1]
         echo
         set -l confirm (input.char (set_color brcyan)">>> Keep finding? (Y/n): ")
         if test $confirm = y; or test $confirm = Y; or test $confirm = ''
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         else
             write (pwd) $ff_lp_path
         end
@@ -150,14 +147,15 @@ function fishfinder
     # Create the list of files and directories used by fzf
     function lsx
         # Since these vars should not be global, we must pass them as args 
-        set -l fl_explode $argv[1]
-        set -l fl_minimal $argv[2]
-        set -l exit_str $argv[3]
-        set -l goto_str $argv[4]
-        set -l back_str $argv[5]
-        set -l up_str $argv[6]
-        set -l explode_str $argv[7]
-        set -l unexplode_str $argv[8]
+        set -l exit_str $argv[1]
+        set -l goto_str $argv[2]
+        set -l back_str $argv[3]
+        set -l up_str $argv[4]
+        set -l explode_str $argv[5]
+        set -l unexplode_str $argv[6]
+        set -l flags $argv[7..-1]
+        set -l fl_explode (dict.get explode $flags)
+        set -l fl_minimal (dict.get minimal $flags)
         echo_not $fl_minimal "$(set_color -u brred)$exit_str"
         if test "$fl_explode" = true
             echo_not $fl_minimal "$(set_color -u bryellow)$unexplode_str"
@@ -266,8 +264,8 @@ end
     # Start the main logic
     #
 
-    # If we have 'fl_last' just echo last path and exit
-    if test "$fl_last" = true
+    # If we have 'flags.last' just echo last path and exit
+    if test "$(dict.get last $flags)" = true
         if test -f $ff_lp_path
             cat $ff_lp_path
         end
@@ -308,14 +306,13 @@ end
 
     # Get the selection
     set sel (lsx \
-      $fl_explode \
-      $fl_minimal \
       $exit_str \
       $goto_str \
       $back_str \
       $up_str \
       $explode_str \
       $unexplode_str \
+      $flags \
       | fzf $fzf_options)
 
     # Check if a special exit command was written
@@ -345,16 +342,16 @@ end
         if test -d "$sel"
             # This is a directory
             ls -l -A $sel
-            keep_finding $ff_lp_path $fl_explode $fl_minimal
+            keep_finding $ff_lp_path $flags
             return
         else if test -f $sel
             set fv_cmd (string split ' ' $file_viewer)
             $fv_cmd $sel
-            keep_finding $ff_lp_path $fl_explode $fl_minimal
+            keep_finding $ff_lp_path $flags
             return
         else
             # The user has likely selected a meta option by mistake
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         end
     end
@@ -379,10 +376,10 @@ end
             ./$sel
         else
             echo "$sel is not executable."
-            keep_finding $ff_lp_path $fl_explode $fl_minimal
+            keep_finding $ff_lp_path $flags
             return
         end
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
@@ -393,11 +390,11 @@ end
         if test $confirm = y
             echo "Deleting $sel ..."
             rm -rf $sel
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         else
             echo "Aborting delete."
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         end
     end
@@ -406,7 +403,7 @@ end
     if test (string match "delquick:*" $sel)
         set sel (string replace "delquick:" "" $sel)
         rm -rf $sel
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
@@ -431,7 +428,7 @@ end
             set_color normal
             eval $cmd
         end
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
@@ -449,10 +446,10 @@ end
             open $sel >/dev/null 2>&1 &
         else
             echo "No suitable open command found (xdg-open or open)."
-            keep_finding $ff_lp_path $fl_explode $fl_minimal
+            keep_finding $ff_lp_path $flags
             return
         end
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
@@ -474,18 +471,18 @@ end
             echo -n $full_path | wl-copy
         else
             echo "No suitable clipboard command found (pbcopy, xclip, or wl-copy)."
-            keep_finding $ff_lp_path $fl_explode $fl_minimal
+            keep_finding $ff_lp_path $flags
             return
         end
         echo "Copied to clipboard: $full_path"
-        keep_finding $ff_lp_path $fl_explode $fl_minimal
+        keep_finding $ff_lp_path (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
     # Handle reload: Reload fishfinder
     if test (string match "reload:*" $sel)
         # Always reload without exploding
-        fishfinder false $fl_minimal
+        fishfinder false (dict.get minimal $flags)
         return
     end
 
@@ -517,32 +514,32 @@ end
             set goto_path (input.line $cmd_str)
         end
         cd $goto_path
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
     # Handle up directory
     if test "$sel" = "$up_str"; or test "$sel" = "up:"
         cd ..
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
     # Handle last: Just go back to fishfinder
     if test "$sel" = "$back_str"; or test "$sel" = "last:"
         cd -
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     end
 
     # Handle explode
     if test "$sel" = "$explode_str"; or test "$sel" = "explode:"
-        fishfinder true $fl_minimal
+        fishfinder true (dict.get minimal $flags)
     end
 
     # Handle unexplode
     if test "$sel" = "$unexplode_str"
-        fishfinder false $fl_minimal
+        fishfinder false (dict.get minimal $flags)
     end
 
     #
@@ -552,24 +549,24 @@ end
     if test -d "$sel"
         # This is a directory
         cd $sel
-        fishfinder $fl_explode $fl_minimal
+        fishfinder (dict.get explode $flags) (dict.get minimal $flags)
         return
     else if test -f $sel
         # This is a file
         if set -q VISUAL
             echo "Opening file with VISUAL editor: $VISUAL"
             $VISUAL $sel
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         else if set -q EDITOR
             echo "Opening file with EDITOR: $EDITOR"
             $EDITOR $sel
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         else
             echo "No editor set. Opening file with 'less'."
             less $sel
-            fishfinder $fl_explode $fl_minimal
+            fishfinder (dict.get explode $flags) (dict.get minimal $flags)
             return
         end
     end
