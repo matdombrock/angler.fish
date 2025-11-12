@@ -8,7 +8,19 @@ source (dirname (realpath (status --current-filename)))/../_lib/input.fish
 
 function fishfinder
 
-    set mode $argv[1] # Optional mode argument
+    # Parse arguments
+    set fl_explode false
+    set fl_minimal false
+    set fl_last false
+    for arg in $argv
+        if test "$arg" = explode; or test "$arg" = e
+            set fl_explode true
+        else if test "$arg" = minimal; or test "$arg" = m
+            set fl_minimal true
+        else if test "$arg" = last; or test "$arg" = l
+            set fl_last true
+        end
+    end
 
     # Check for fzf
     if not type -q fzf
@@ -34,6 +46,38 @@ function fishfinder
         end
     end
 
+    function echo_not
+        set -l condition $argv[1]
+        set -l msg $argv[2]
+        if test $condition = false
+            echo $msg
+        end
+    end
+
+    # Create the list of files and directories used by fzf
+    function lsx
+        # Since these vars should not be global, we must pass them as args 
+        set -l fl_explode $argv[1]
+        set -l fl_minimal $argv[2]
+        set -l exit_str $argv[3]
+        set -l goto_str $argv[4]
+        set -l up_str $argv[5]
+        set -l explode_str $argv[6]
+        set -l unexplode_str $argv[7]
+        echo_not $fl_minimal "$(set_color yellow)$exit_str"
+        if test "$fl_explode" = true
+            echo_not $fl_minimal "$(set_color yellow)$unexplode_str"
+            set_color normal
+            find (pwd) -type f 2>/dev/null | sed "s|^$(pwd)/||"
+            return
+        end
+        echo_not $fl_minimal "$(set_color yellow)$goto_str"
+        echo_not $fl_minimal "$(set_color yellow)$explode_str"
+        echo_not $fl_minimal "$(set_color yellow)$exit_str"
+        set_color normal
+        ls --group-directories-first -A1 -F --color=always 2>/dev/null
+    end
+
     # Define special messages
     # NOTE: If the icons dont show, you need to use a nerd font in your terminal
     set exit_str ' exit'
@@ -43,44 +87,18 @@ function fishfinder
     set unexplode_str ' unexplode'
     set cmd_str 'λ  '
 
-    # NOTE: Passing functions from our script into fzf is tricky
-    # The easiest way is to define them as strings and eval them inside fzf
-    # Force string functions to use fish or it will use the default shell which may not be fish
-    # This could also be done by just writing it as posix sh but this is a fish script after all
-    set lsx_fn '\
-function lsx
-    # Since these vars should not be global, we must pass them as args
-    set mode $argv[1]
-    set_color yellow
-    echo '$exit_str'
-    if test "$mode" = explode
-        set_color yellow
-        echo '$unexplode_str'
-        set_color normal
-        echo
-        find (pwd) -type f 2>/dev/null | sed "s|^$(pwd)/||"
-        return
-    end
-    set_color yellow
-    echo '$goto_str'
-    echo '$explode_str'
-    set_color green
-    echo '$up_str'
-    set_color normal
-    echo
-    ls --group-directories-first -A1 -F --color=always 2>/dev/null
-end'
-    # We also use the `lsx` function outside of fzf
-    # We can use eval to define it as a literal function `lsx` the current context
-    eval $lsx_fn
-
-    # Set the fzf preview command
+    # Determine file viewer command
     set file_viewer cat
     if type -q bat
         set file_viewer 'bat --plain --color=always'
     else if type -q batcat # Some systems (e.g. Debian) use batcat instead of bat
         set file_viewer 'batcat --plain --color=always'
     end
+    # Set the fzf preview command
+    # NOTE: Passing functions from our script into fzf is tricky
+    # The easiest way is to define them as strings and eval them inside fzf
+    # Force string functions to use fish or it will use the default shell which may not be fish
+    # This could also be done by just writing it as posix sh but this is a fish script after all
     set fzf_preview_fn '\
 fish -c "
 # Since we use the -F flag on ls we might have a trailing asterisk
@@ -132,8 +150,8 @@ end
     # Start the main logic
     #
 
-    # If we have 'l' mode just echo last path and exit
-    if test "$mode" = l
+    # If we have 'fl_last' just echo last path and exit
+    if test "$fl_last" = true
         if test -f $ff_lp_path
             cat $ff_lp_path
         end
@@ -145,7 +163,15 @@ end
     rm -f $special_exit_path
 
     # Get the selection
-    set sel (lsx $mode | fzf $fzf_options)
+    set sel (lsx \
+      $fl_explode \
+      $fl_minimal \
+      $exit_str \
+      $goto_str \
+      $up_str \
+      $explode_str \
+      $unexplode_str \
+      | fzf $fzf_options)
 
     # Check if a special exit command was written
     # If so, read it to $sel and delete the file
@@ -165,6 +191,7 @@ end
 
     #
     # Check for special exit commands
+    # The commands here are only accessible via keybinds in fzf
     #
 
     # Handle view: Just view the file / directory
@@ -263,6 +290,7 @@ end
 
     #
     # Handle normal commands
+    # These may also be accessible via keybinds in fzf
     #
 
     # Handle exit
