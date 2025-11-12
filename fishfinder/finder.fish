@@ -55,6 +55,8 @@ function kb
         set action (spec "reload:")
     else if test $action_id = cmd
         set action (spec "cmd:{}")
+    else if test $action_id = hidden
+        set action (spec "hidden:")
     end
     set ff_kb $ff_kb --bind="$input:$action"
 end
@@ -70,7 +72,7 @@ source $ff_kb_path
 
 function fishfinder
 
-    # Parse arguments
+    # Parse arguments, flags is a `dict` type
     set flags explode=false minimal=false last=false
     for arg in $argv
         if test "$arg" = explode; or test "$arg" = e
@@ -79,6 +81,8 @@ function fishfinder
             set flags (dict.set minimal true $flags)
         else if test "$arg" = last; or test "$arg" = l
             set flags (dict.set last true $flags)
+        else if test "$arg" = hidden; or test "$arg" = h
+            set flags (dict.set hidden true $flags)
         end
     end
     # If argv is a dict, use that instead
@@ -87,16 +91,6 @@ function fishfinder
             set flags $argv
         end
     end
-    # We can also provide positional boolean args
-    # This is mostly for internal use
-    # if test (count $argv) = 2
-    #     if test "$argv[1]" = true; or test "$argv[1]" = false
-    #         set flags (dict.set explode $argv[1] $flags)
-    #     end
-    #     if test "$argv[2]" = true; or test "$argv[2]" = false
-    #         set flags (dict.set minimal $argv[2] $flags)
-    #     end
-    # end
 
     # Check for fzf
     if not type -q fzf
@@ -162,6 +156,7 @@ function fishfinder
         set -l flags $argv[7..-1]
         set -l fl_explode (dict.get explode $flags)
         set -l fl_minimal (dict.get minimal $flags)
+        set -l fl_hidden (dict.get hidden $flags)
         echo_not $fl_minimal "$(set_color -u brred)$exit_str"
         if test "$fl_explode" = true
             echo_not $fl_minimal "$(set_color -u bryellow)$unexplode_str"
@@ -174,7 +169,11 @@ function fishfinder
         echo_not $fl_minimal "$(set_color -u brmagenta)$back_str"
         echo_not $fl_minimal "$(set_color -u brcyan)$up_str"
         set_color normal
-        ls --group-directories-first -A1 -F --color=always 2>/dev/null
+        if test "$fl_hidden" = true
+            ls --group-directories-first -A1 -F --color=always 2>/dev/null
+        else
+            ls --group-directories-first -I '.*' -A1 -F --color=always 2>/dev/null
+        end
     end
 
     # Define special messages
@@ -433,6 +432,18 @@ end
             echo "$cmd_str""$cmd"
             set_color normal
             eval $cmd
+        end
+        fishfinder $flags
+        return
+    end
+
+    # Handle hidden: Toggle hidden files
+    if test $sel = "hidden:"
+        set fl_hidden (dict.get hidden $flags)
+        if test "$fl_hidden" = true
+            set flags (dict.set hidden false $flags)
+        else
+            set flags (dict.set hidden true $flags)
         end
         fishfinder $flags
         return
