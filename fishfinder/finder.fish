@@ -25,38 +25,37 @@ function kb
         set -l cmd $argv[1]
         echo "execute(echo $cmd >> $special_exit_path)+abort"
     end
-    if test $action_id = accept
-        set action accept
-    else if test $action_id = abort
-        set action abort
-    else if test $action_id = up
+    if test $action_id = up:
         set action (spec "up:")
-    else if test $action_id = explode
+    else if test $action_id = explode:
         set action (spec "explode:")
-    else if test $action_id = view
+    else if test $action_id = view:
         set action (spec "view:{}")
-    else if test $action_id = goto
+    else if test $action_id = goto:
         set action (spec "goto:")
-    else if test $action_id = last
+    else if test $action_id = last:
         set action (spec "last:")
-    else if test $action_id = print
+    else if test $action_id = print:
         set action (spec "print:{}")
-    else if test $action_id = exec
+    else if test $action_id = exec:
         set action (spec "exec:{}")
-    else if test $action_id = open
+    else if test $action_id = open:
         set action (spec "open:{}")
-    else if test $action_id = copy
+    else if test $action_id = copy:
         set action (spec "copy:{}")
-    else if test $action_id = del
+    else if test $action_id = del:
         set action (spec "del:{}")
-    else if test $action_id = delquick
+    else if test $action_id = delquick:
         set action (spec "delquick:{}")
-    else if test $action_id = reload
+    else if test $action_id = reload:
         set action (spec "reload:")
-    else if test $action_id = cmd
+    else if test $action_id = cmd:
         set action (spec "cmd:{}")
-    else if test $action_id = hidden
+    else if test $action_id = hidden:
         set action (spec "hidden:")
+    else
+        # Allow passing through any fzf action directly
+        set action $action_id
     end
     set ff_kb $ff_kb --bind="$input:$action"
 end

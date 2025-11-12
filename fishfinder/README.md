@@ -32,29 +32,67 @@ You can enter a special mode by sending an argument to fishfinder
 > cd (./finder.fish l)
 > ```
 
-## Default Keybinds
+## Keybinds
 
-- `enter     `: Enter diretory or select file
-- `right     `: Enter directory or select file
-- `left      `: Go up one directory (cd ..)
-- `ctrl-a    `: Show all files (toggle hidden)
-- `ctrl-x    `: Set explode mode (show all files recursively from current directory)
-- `ctrl-v    `: View file or directory listing
-- `ctrl-p    `: Print the selected file path and exit
-- `ctrl-g    `: Go to a directory (cd)
-- `ctrl-l    `: Go back a directory (cd -)
-- `ctrl-e    `: Execute the selected file
-- `ctrl-o    `: Open file or directory in GUI (open / xdg-open) 
-- `ctrl-y    `: Copy the selected path to the system clipboard
-- `ctrl-d    `: Delete the selected file or directory with confirmation
-- `alt-d     `: Instantly delete the selected file or directory
-- `ctrl-r    `: Reload the current directory listing
-- `: (colon) `: Execute a custom command on the selected file or directory
-- `shift-up  `: Scroll preview up
-- `shift-down`: Scroll preview down
-- `ctrl-q    `: Quit
+### Default keybinds
 
-## Custom Keybinds
+The default keybinds are as follows. See the "Action Map" below for more info.
+
+```fish
+# Keybindings for FishFinder custom actions are suffixed `:` (colon)
+kb up: left
+kb hidden: ctrl-a
+kb explode: ctrl-x
+kb view: ctrl-v
+kb goto: ctrl-g
+kb last: ctrl-l
+kb print: ctrl-p
+kb exec: ctrl-e
+kb open: ctrl-o
+kb copy: ctrl-y
+kb del: ctrl-d
+kb delquick: alt-d
+kb reload: ctrl-r
+kb cmd: ':'
+
+# We can also use ANY valid fzf action!
+kb accept enter
+kb accept right
+kb preview-up alt-k
+kb preview-down alt-j
+kb toggle-preview alt-h
+```
+
+> [!TIP]
+> This tool inherits your default `fzf` keybinds unless they are remapped.
+> This means by default you have:
+> `enter     `: Enter directory or select file (accept)
+> `shift-up  `: Scroll preview up
+> `shift-down`: Scroll preview down
+> `ctrl-q    `: Quit
+
+
+### FishFinder Actions Map
+
+- `up:      `: Move up one dir (cd ..)
+- `explode: `: Set explode mode (show all files recursively from current directory)
+- `view:    `: Just view the file
+- `goto:    `: Go to a specific directory
+- `last:    `: Go to the last directory (cd -)
+- `print:   `: Print the selected file path and exit
+- `exec:    `: Execute the selected file
+- `open:    `: Open file or directory in GUI (open / xdg-open)
+- `copy:    `: Copy the selected path to the system clipboard
+- `del:     `: Delete the selected file or directory with confirmation
+- `delquick:`: Instantly delete the selected file or directory
+- `reload:  `: Reload the current directory listing
+- `cmd:     `: Execute a custom command on the selected file or directory
+- `hidden:  `: Toggle showing hidden files
+
+> [!NOTE]
+> FishFinder actions are suffixed with a `:` (colon).
+
+### Custom Keybinds
 
 You can set a `FF_KB` environmental variable with a path to a `keybinds.fish` file.
 
@@ -68,30 +106,21 @@ For example:
 kb goto ctrl-d
 ```
 
-### Action Map
+> [!WARNING]
+> `ctrl-h` is treated as backspace by most terms
+> `ctrl-b` is used by tmux
 
-- `accept  `: Accept the input
-- `abort   `: Abort the input
-- `up      `: Move up one dir (cd ..)
-- `explode `: Set explode mode (show all files recursively from current directory)
-- `view    `: Just view the file
-- `goto    `: Go to a specific directory
-- `last    `: Go to the last directory (cd -)
-- `print   `: Print the selected file path and exit
-- `exec    `: Execute the selected file
-- `open    `: Open file or directory in GUI (open / xdg-open)
-- `copy    `: Copy the selected path to the system clipboard
-- `del     `: Delete the selected file or directory with confirmation
-- `delquick`: Instantly delete the selected file or directory
-- `reload  `: Reload the current directory listing
-- `cmd     `: Execute a custom command on the selected file or directory
-- `hidden  `: Toggle showing hidden files
+> [!TIP]
+> You can use any valid [fzf action](https://www.mankier.com/1/fzf#Key/Event_Bindings-Available_Actions) here in addition to the FishFinder actions. The `fzf` actions are NOT suffixed with a `:` (colon). 
+
+> [!TIP]
+> See [fzf man page](https://www.mankier.com/1/fzf#Key/Event_Bindings-Available_Keys:_(Synonyms)) for a list of valid keys.
 
 > [!TIP]
 > See the ['./keybinds.fish'](./keybinds.fish) file for keybind examples. 
 
 > [!TIP]
-> See [fzf man page](https://www.mankier.com/1/fzf#Key/Event_Bindings-Available_Keys:_(Synonyms)) for a list of valid keys.
+> You can bind the same action multiple times but a given key should only map to one action.
 
 ## Todo
 - Save position & query when reloading
