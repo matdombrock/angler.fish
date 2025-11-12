@@ -8,7 +8,6 @@ source (dirname (realpath (status --current-filename)))/../_lib/input.fish
 
 function fishfinder
 
-
     # Parse arguments
     set fl_explode false
     set fl_minimal false
@@ -36,6 +35,24 @@ function fishfinder
     # Check for fzf
     if not type -q fzf
         echo "This program requires 'fzf'!" && exit 1
+    end
+
+    # Check fzf version
+    # On old versions of fzf we cant use --with-shell
+    # If fzf is less than 0.48 and shell is not fish, exit with error
+    set fzf_version (fzf --version | string replace -r 'fzf v' '')
+    set fzf_major_version (echo $fzf_version | string split '.' | head -n2)
+    # We assume the user has fish as their default shell
+    set fzf_with_shell false
+    # If they dont have fish as their default shell, we need fzf >= 0.48
+    if test $SHELL != /usr/bin/fish
+        set fzf_with_shell true
+        if test $fzf_major_version -lt 0.48
+            echo "This program requires fzf version 0.39 or higher!"
+            echo "You have version $fzf_version installed."
+            echo "Either upgrade fzf or set fish as your default shell."
+            exit 1
+        end
     end
 
     # Write data to path
@@ -183,7 +200,6 @@ end
     set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border \
         --preview="$fzf_preview_fn" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
-        --with-shell="fish -c" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
         --bind=ctrl-x:"execute(echo 'explode:' >> $special_exit_path)+abort" \
         --bind=ctrl-v:"execute(echo view:{} >> $special_exit_path)+abort" \
@@ -197,6 +213,11 @@ end
         --bind=alt-d:"execute(rm -rf {})+execute(echo reload: >> $special_exit_path)+abort" \
         --bind=ctrl-r:"execute(echo reload: >> $special_exit_path)+abort" \
         --bind=\::"execute(echo cmd:{} >> $special_exit_path)+abort"
+
+    # If we need to specify shell for fzf, do so
+    if test $fzf_with_shell = true
+        set fzf_options $fzf_options --with-shell "fish -c"
+    end
 
     #
     # Start the main logic
