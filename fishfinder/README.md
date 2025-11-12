@@ -32,10 +32,10 @@ You can enter a special mode by sending an argument to fishfinder
 ## Keybinds
 - Right Arrow: Enter directory or select file
 - Left Arrow: Go up one directory
+- Ctrl-X: Toggle explode mode (show all files recursively from current directory)
 - Ctrl-V: View file or directory listing
 - Ctrl-P: Print the selected file path and exit
 - Ctrl-E: Execute the selected file
-- Ctrl-X: Toggle explode mode (show all files recursively from current directory)
 - Ctrl-D: Delete the selected file or directory with confirmation
 - Alt-D:  Instantly delete the selected file or directory
 - Ctrl-R: Reload the current directory listing
