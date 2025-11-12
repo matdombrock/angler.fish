@@ -21,6 +21,16 @@ function fishfinder
             set fl_last true
         end
     end
+    # We can also provide positional boolean args
+    # This is mostly for internal use
+    if test (count $argv) = 2
+        if test "$argv[1]" = true; or test "$argv[1]" = false
+            set fl_explode $argv[1]
+        end
+        if test "$argv[2]" = true; or test "$argv[2]" = false
+            set fl_minimal $argv[2]
+        end
+    end
 
     # Check for fzf
     if not type -q fzf
@@ -37,15 +47,18 @@ function fishfinder
     # Ask if we want to keep finding
     function keep_finding
         set -l ff_lp_path $argv[1]
+        set -l fl_explode $argv[2]
+        set -l fl_minimal $argv[3]
         echo
         set -l confirm (input.char (set_color brcyan)">>> Keep finding? (Y/n): ")
         if test $confirm = y; or test $confirm = Y; or test $confirm = ''
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
         else
             write (pwd) $ff_lp_path
         end
     end
 
+    # Echo if condition is false
     function echo_not
         set -l condition $argv[1]
         set -l msg $argv[2]
@@ -64,16 +77,16 @@ function fishfinder
         set -l up_str $argv[5]
         set -l explode_str $argv[6]
         set -l unexplode_str $argv[7]
-        echo_not $fl_minimal "$(set_color yellow)$exit_str"
+        echo_not $fl_minimal "$(set_color -usingle brred)$exit_str"
         if test "$fl_explode" = true
-            echo_not $fl_minimal "$(set_color yellow)$unexplode_str"
+            echo_not $fl_minimal "$(set_color -usingle bryellow)$unexplode_str"
             set_color normal
             find (pwd) -type f 2>/dev/null | sed "s|^$(pwd)/||"
             return
         end
-        echo_not $fl_minimal "$(set_color yellow)$goto_str"
-        echo_not $fl_minimal "$(set_color yellow)$explode_str"
-        echo_not $fl_minimal "$(set_color yellow)$exit_str"
+        echo_not $fl_minimal "$(set_color -usingle bryellow)$explode_str"
+        echo_not $fl_minimal "$(set_color -usingle brgreen)$goto_str"
+        echo_not $fl_minimal "$(set_color -usingle brcyan)$up_str"
         set_color normal
         ls --group-directories-first -A1 -F --color=always 2>/dev/null
     end
@@ -103,17 +116,48 @@ function fishfinder
 fish -c "
 # Since we use the -F flag on ls we might have a trailing asterisk
 # For some reason (???) setting vars doesnt work here so we use a function instead
-function clean_sel
-  echo {} | sed \'s/[*\/]\$//\'
-end
-if test -f (clean_sel); 
+function clean_sel;
+  echo {} | sed \'s/[*\/]\$//\';
+end;
+if test {} = \"'$exit_str'\"; 
+    echo Exit FishFinder; 
+else if test {} = \"'$goto_str'\"; 
+    echo Go to directory; 
+else if test {} = \"'$up_str'\"; 
+    echo Go up one directory; 
+else if test {} = \"'$explode_str'\"; 
+    echo Explode current directory; 
+else if test {} = \"'$unexplode_str'\"; 
+    echo Unexplode current directory;
+else if test -f (clean_sel); 
     echo (set_color --bold bryellow)file(set_color normal):
     '$file_viewer' (clean_sel); 
 else if test -d (clean_sel); 
     echo (set_color --bold brred)directory(set_color normal):
     ls --group-directories-first -A1 -F --color=always (clean_sel) 2>/dev/null; 
+else if test -L (clean_sel); 
+    echo (set_color --bold bryellow)symlink(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -e (clean_sel); 
+    echo (set_color --bold bryellow)other(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -S (clean_sel); 
+    echo (set_color --bold bryellow)socket(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -p (clean_sel); 
+    echo (set_color --bold bryellow)pipe(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -b (clean_sel); 
+    echo (set_color --bold bryellow)block device(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -c (clean_sel); 
+    echo (set_color --bold bryellow)character device(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
+else if test -d (clean_sel) = false; and test -f (clean_sel) = false; 
+    echo (set_color --bold bryellow)non-standard file type(set_color normal):
+    ls -l --color=always (clean_sel) 2>/dev/null;
 else; 
-    echo \"Not a file or directory\"; 
+    echo No preview available.; 
 end
 "'
 
@@ -132,7 +176,7 @@ end
     end
 
     # Set up fzf options
-    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=80% --border \
+    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border \
         --preview="$fzf_preview_fn {}" --preview-window=right:60%:wrap \
         --bind=right:"accept" \
         --bind=left:"execute(echo 'up:' >> $special_exit_path)+abort" \
@@ -161,6 +205,30 @@ end
     # Clean up any previous special exit command
     # Guards against false positives
     rm -f $special_exit_path
+
+    # Draw the header area
+    clear
+    set width (tput cols)
+    set art_width 12
+    set padding (math floor (math "($width - $art_width) / 2"))
+    set bg ░
+    set_color blue
+    for i in (seq $padding)
+        echo -n $bg
+    end
+    echo -n (set_color -r yellow)" FishFinder "(set_color normal)
+    set_color blue
+    for i in (seq $padding)
+        echo -n $bg
+    end
+    # Check if we have an odd number of columns
+    set diff (math $width - $art_width - (math $padding x 2))
+    if test $diff != 0
+        for i in (seq $diff)
+            echo -n $bg
+        end
+    end
+    echo
 
     # Get the selection
     set sel (lsx \
@@ -200,16 +268,16 @@ end
         if test -d "$sel"
             # This is a directory
             ls -l -A $sel
-            keep_finding $ff_lp_path
+            keep_finding $ff_lp_path $fl_explode $fl_minimal
             return
         else if test -f $sel
             set fv_cmd (string split ' ' $file_viewer)
             $fv_cmd $sel
-            keep_finding $ff_lp_path
+            keep_finding $ff_lp_path $fl_explode $fl_minimal
             return
         else
             # The user has likely selected a meta option by mistake
-            fishfinder $ff_lp_path
+            fishfinder $fl_explode $fl_minimal
             return
         end
     end
@@ -234,10 +302,10 @@ end
             ./$sel
         else
             echo "$sel is not executable."
-            keep_finding $ff_lp_path
+            keep_finding $ff_lp_path $fl_explode $fl_minimal
             return
         end
-        fishfinder
+        fishfinder $fl_explode $fl_minimal
         return
     end
 
@@ -248,11 +316,11 @@ end
         if test $confirm = y
             echo "Deleting $sel ..."
             rm -rf $sel
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
             return
         else
             echo "Aborting delete."
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
             return
         end
     end
@@ -278,13 +346,14 @@ end
             set_color normal
             eval $cmd
         end
-        fishfinder
+        fishfinder $fl_explode $fl_minimal
         return
     end
 
     # Handle reload: Reload fishfinder
     if test (string match "reload:*" $sel)
-        fishfinder
+        # Always reload without exploding
+        fishfinder false $fl_minimal
         return
     end
 
@@ -316,25 +385,25 @@ end
             set goto_path (input.line $cmd_str)
         end
         cd $goto_path
-        fishfinder
+        fishfinder $fl_explode $fl_minimal
         return
     end
 
     # Handle up directory
     if test "$sel" = "$up_str"; or test "$sel" = "up:"
         cd ..
-        fishfinder
+        fishfinder $fl_explode $fl_minimal
         return
     end
 
     # Handle explode
     if test "$sel" = "$explode_str"; or test "$sel" = "explode:"
-        fishfinder explode
+        fishfinder true $fl_minimal
     end
 
     # Handle unexplode
     if test "$sel" = "$unexplode_str"
-        fishfinder
+        fishfinder false $fl_minimal
     end
 
     #
@@ -344,24 +413,24 @@ end
     if test -d "$sel"
         # This is a directory
         cd $sel
-        fishfinder
+        fishfinder $fl_explode $fl_minimal
         return
     else if test -f $sel
         # This is a file
         if set -q VISUAL
             echo "Opening file with VISUAL editor: $VISUAL"
             $VISUAL $sel
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
             return
         else if set -q EDITOR
             echo "Opening file with EDITOR: $EDITOR"
             $EDITOR $sel
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
             return
         else
             echo "No editor set. Opening file with 'less'."
             less $sel
-            fishfinder
+            fishfinder $fl_explode $fl_minimal
             return
         end
     end

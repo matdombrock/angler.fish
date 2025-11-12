@@ -11,12 +11,15 @@ FishFinder is a terminal file explorer with fuzzy searching using fzf.
 > [!TIP]
 > This tool will try to use `bat` or `batcat` to preview files if installed. If neither can be found it falls back to `cat`.
 
-## Modes:
+## Parameters
 You can enter a special mode by sending an argument to fishfinder
 - No argument: Normal mode, shows files and directories
 - 'explode', 'e': Shows all files recursively from current directory
 - 'last', 'l': Last path mode, echoes the last selected path from fishfinder and exits
 - 'minimal', 'm': Dont show TUI options (keybinds only mode)
+
+> [!TIP]
+> These parameters can be combined and passed in any order.
 
 > [!TIP]
 > When this program exists it will write a temporary file that contains the last selected path.
@@ -26,7 +29,7 @@ You can enter a special mode by sending an argument to fishfinder
 > cd (fishfinder l)
 > ```
 
-## Keybinds:
+## Keybinds
 - Right Arrow: Enter directory or select file
 - Left Arrow: Go up one directory
 - Ctrl-V: View file or directory listing
@@ -47,8 +50,6 @@ You can enter a special mode by sending an argument to fishfinder
     - Should also support `open` for macOS
 - Option to execute with args, maybe should be the default for exec?
     - Could drop to > [cmd] ...
-- Goto command to jump to a specific directory
-    - Maybe replace the 'home' option
 - This is becoming hard to maintain
     - It may be easier if implemented in a way that cant be sourced cleanly
     - In other words, not as a single top level function
