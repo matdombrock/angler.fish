@@ -131,3 +131,4 @@ kb goto ctrl-d
 ## Todo
 - Save position & query when reloading
 - Improve reload speed
+- Support multi-select
