@@ -15,3 +15,10 @@ function input.char
     end
     echo $char
 end
+
+function input.nb
+    stty -icanon -echo min 0 time 1
+    set char (dd bs=1 count=1 2>/dev/null)
+    stty sane
+    echo $char
+end
