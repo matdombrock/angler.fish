@@ -34,6 +34,10 @@ source angler.alias.fish
 ```
 
 > [!TIP]
+> Use the `:alias` alias to list all angler aliases.
+
+
+> [!WARNING]
 > You must be inside a `fish` shell to source these aliases.
 
 ### Sourcing vs Alias
