@@ -1,48 +1,7 @@
-# Requires jq
+#! /usr/bin/env fish
 
-source (dirname (realpath (status --current-filename)))/../_lib/dict.fish
-
-function opt_or
-    set -l key $argv[1]
-    set -l default $argv[2]
-    set -l opt $argv[3..-1]
-    set -l value (dict.get $key $opt)
-    if test $value = null
-        if test $default = exit
-            echo "Error: $key is required" >&2
-            exit 1
-        end
-        echo $default
-    else
-        echo $value
-    end
-end
-
-function ollama
-    set -l opt $argv
-
-    set -l prompt (opt_or prompt exit $opt)
-    set -l model (opt_or model exit $opt)
-    set -l server (opt_or server "http://localhost:11434" $opt)
-    set -l system (opt_or system "You are a helpful assistant" $opt)
-    set -l seed (opt_or seed -1 $opt)
-    set -l temperature (opt_or temperature 0.7 $opt)
-
-    set -l res (\
-curl -s $server/api/generate \
-  -d '{
-  "model": "'$model'",
-  "prompt": "'$prompt'",
-  "system": "'$system'",
-  "options": {
-    "seed": '$seed',
-    "temperature": '$temperature'
-  },
-  "stream": false
-}')
-
-    echo $res | jq -r '.response'
-end
+source (dirname (realpath (status --current-filename)))/../_lib/input.fish
+source (dirname (realpath (status --current-filename)))/llm.core.fish
 
 set model gemma3:4b
 set server http://localhost:11434
@@ -60,6 +19,10 @@ else
     exit 1
 end
 
+#
+# Utility functions
+#
+
 function sysinfo
     echo -n $(whoami)@$(hostname) - \
         $(cat /etc/*-release | \
@@ -75,22 +38,26 @@ end
 
 function echollm
     set -l opt $argv
-    set -l res (ollama $opt)
+    set -l res (ollama_completion $opt)
     set_color brgreen
-    echo $res | string trim
+    echo -e $res | string trim
 end
 
+#
+# Command functions
+#
+
 function com
-    set -l opt \
+    set -l opts \
         prompt="$argv" \
         system="You are a helpful AI assistant." \
         model="$model" \
         server="$server"
-    echollm $opt
+    echollm $opts
 end
 
 function cmd
-    set -l opt \
+    set -l opts \
         prompt="$argv" \
         system="\
 The user will describe a unix command.\
@@ -100,14 +67,51 @@ Here is the users system information: $(sysinfo)." \
         model="$model" \
         server="$server" \
         temperature=0.2
-    echollm $opt
+    echollm $opts
+end
+
+function chat
+    # Initialize chat_history for this session
+    set -l chat_history ""
+
+    while true
+        set -l user_message (input.line "> ")
+        if test "$user_message" = exit
+            break
+        end
+
+        # Append user message to history
+        if test -z "$chat_history"
+            set chat_history "{\"role\":\"user\",\"content\":\"$user_message\"}"
+        else
+            set chat_history $chat_history ",{\"role\":\"user\",\"content\":\"$user_message\"}"
+        end
+
+        # Format messages as JSON array
+        set -l messages "[$chat_history]"
+
+        # set -l opts \
+        #     model="$model" \
+        #     server="$server" \
+        #     system="You are a helpful AI assistant." \
+        #     messages="$messages"
+        set -e opts
+        set -l opts (dict.set model $model $opts)
+        set -l opts (dict.set server $server $opts)
+        set -l opts (dict.set system "You are a helpful AI assistant." $opts)
+        set -l opts (dict.set messages "$messages" $opts)
+
+        # echo $opts
+
+        set -l res (ollama_chat $opts | string collect)
+
+        echo -e $res | string trim
+
+        set -l res (echo $res | string join \n) # no new lines
+
+        # Append AI response to history
+        set chat_history $chat_history ",{\"role\":\"assistant\",\"content\":\"$res\"}"
+    end
 end
 
 eval $argv[1] $argv[2..-1]
-
-# Appease LSP
-if test 1 = 0
-    ollama
-    com
-    cmd
-end
