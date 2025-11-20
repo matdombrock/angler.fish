@@ -23,8 +23,8 @@ Edit this file as needed to set your endpoint and desired model.
 ```
 
 ### Commands
-`com` - A simple one-time completion
-`cmd` - Describe a unix command and the LLM will respond with a command example
+- `com` - A simple one-time completion
+- `cmd` - Describe a unix command and the LLM will respond with a command example
 
 > [!TIP]
 > You will need to wrap your prompt in parenthesis if it contains reserved characters like (`?`). 
