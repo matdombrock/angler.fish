@@ -1,3 +1,6 @@
+# NOTE: This file is intended to be sourced
+# This is required to set the prompt style
+
 set PROMPT full
 set rod_list
 
@@ -89,7 +92,7 @@ function fish_prompt
     return
 end
 
-function rod
+function :rod
     if test "$argv[1]" = list; or test "$argv[1]" = l; or test -z "$argv[1]"
         set_color brmagenta
         echo "Available prompt styles:"
@@ -105,5 +108,5 @@ end
 # Appease the LSP
 if test 1 = 0
     fish_prompt
-    rod
+    :rod
 end
