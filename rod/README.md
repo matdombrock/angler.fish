@@ -6,6 +6,15 @@ Change your fish shell prompt.
 > 
 > This is required for setting the shell prompt
 
+## Sourcing
+
+To use the `:rod` command you must first source this file: 
+
+```sh
+source rod.fish
+:rod minimal
+```
+
 ## Usage
 
 ### List
