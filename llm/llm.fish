@@ -76,8 +76,23 @@ function chat
 
     while true
         set -l user_message (input.line "> ")
-        if test "$user_message" = exit
+        if test "$user_message" = /exit; or test "$user_message" = /quit
             break
+        end
+
+        if test -z "$user_message"
+            continue
+        end
+
+        if test "$user_message" = /history
+            if test -z "$chat_history"
+                set_color yellow
+                echo "No chat history yet."
+            else
+                set_color cyan
+                echo -e "Chat History:\n[$chat_history]" | string trim
+            end
+            continue
         end
 
         # Append user message to history
@@ -90,22 +105,25 @@ function chat
         # Format messages as JSON array
         set -l messages "[$chat_history]"
 
-        # set -l opts \
-        #     model="$model" \
-        #     server="$server" \
-        #     system="You are a helpful AI assistant." \
-        #     messages="$messages"
-        set -e opts
-        set -l opts (dict.set model $model $opts)
-        set -l opts (dict.set server $server $opts)
-        set -l opts (dict.set system "You are a helpful AI assistant." $opts)
-        set -l opts (dict.set messages "$messages" $opts)
+        set -l opts \
+            model="$model" \
+            server="$server" \
+            system="You are a helpful AI assistant." \
+            messages="$messages"
+        # set -e opts
+        # set -l opts (dict.set model $model $opts)
+        # set -l opts (dict.set server $server $opts)
+        # set -l opts (dict.set system "You are a helpful AI assistant." $opts)
+        # set -l opts (dict.set messages "$messages" $opts)
 
         # echo $opts
 
         set -l res (ollama_chat $opts | string collect)
 
+        set_color brgreen
+        echo ""
         echo -e $res | string trim
+        echo ""
 
         set -l res (echo $res | string join \n) # no new lines
 

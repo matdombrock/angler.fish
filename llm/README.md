@@ -1,6 +1,8 @@
 # LLM
 A fish interface for interacting with LLMs.
 
+![screenshot](_doc/screenshot.png)
+
 ## Supports
 - Ollama
 - More later?
