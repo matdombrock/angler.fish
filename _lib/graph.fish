@@ -84,12 +84,14 @@ function graph.frame_new
     set -l w $argv[1]
     set -l h $argv[2]
     set -l c $argv[3]
+    set -l frame
     for y in (seq 1 $h)
         for x in (seq 1 $w)
-            echo -n $c
+            set -a frame $c
         end
-        echo
+        set -a frame "\n"
     end
+    echo -e (string join '' $frame)
 end
 
 # set a "pixel" in the frame at (x, y) with color c
@@ -98,17 +100,19 @@ function graph.frame_set
     set -l y $argv[2]
     set -l c $argv[3]
     set -l frame $argv[4]
+    set -l new_frame
     set -l lines (string split \n $frame)
     for i in (seq 1 (count $lines))
         set -l line $lines[$i]
         set -l chars (string split '' $line)
         for j in (seq 1 (count $chars))
             if test $i = $y; and test $j = $x
-                echo -n $c
+                set -a new_frame $c
             else
-                echo -n $chars[$j]
+                set -a new_frame $chars[$j]
             end
         end
-        echo ''
+        set -a new_frame "\n"
     end
+    echo -e (string join '' $new_frame)
 end
