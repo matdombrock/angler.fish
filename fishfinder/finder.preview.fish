@@ -9,18 +9,6 @@ set ff_kb_path $argv[8]
 set file_viewer $argv[9]
 set selection $argv[10]
 
-# echo $exit_str
-# echo $goto_str
-# echo $back_str
-# echo $up_str
-# echo $explode_str
-# echo $unexplode_str
-# echo $ff_kb_txt
-# echo $ff_kb_path
-# echo $file_viewer
-# echo $selection
-# exit
-
 function tip
     echo (set_color brgreen) command(set_color normal):
     echo (set_color bryellow)$argv(set_color normal)
