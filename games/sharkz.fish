@@ -34,7 +34,7 @@ W W W W W W W W W W W W W W W W W W W W W W W W W W W W W W W W W
 
 graph.render $title half
 set_color brgreen
-echo COntrols:
+echo Controls:
 set_color bryellow
 echo h j k l
 echo ↙b ↘n ↖y ↗u
