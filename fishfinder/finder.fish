@@ -216,6 +216,11 @@ function fishfinder
     "'$ff_kb_path'" \
     "'$file_viewer'" {}'
 
+    # TODO:
+    # I think the with-shell option is no longer needed since I'm explicitly calling fish in the preview command
+    # Leaving this here for now in case of issues
+    # This is not supported on older versions of fzf so removing it could be nice
+    #
     # If we need to specify shell for fzf, do so
     if test $fzf_with_shell = true
         set fzf_options $fzf_options --with-shell "fish -c"
