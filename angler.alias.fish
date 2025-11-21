@@ -48,3 +48,4 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Interact with LLMs" :llm "$base/llm/llm.fish"
 :alias "Adventure game" :adv "$base/games/adv.fish"
 :alias "Graphical Dice Roller" :dice "$base/games/dice.fish"
+:alias "SHARKS! game" :sharkz "$base/games/sharkz.fish"
