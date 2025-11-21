@@ -37,8 +37,8 @@ function sysinfo
 end
 
 function echollm
-    set -l opt $argv
-    set -l res (ollama_completion $opt)
+    set -l opts $argv
+    set -l res (ollama_completion $opts)
     set_color brgreen
     echo -e $res | string trim
 end
@@ -71,6 +71,13 @@ Here is the users system information: $(sysinfo)." \
 end
 
 function chat
+
+    set -l system $argv
+    if test -z "$system"
+        set system "You are a helpful AI assistant."
+    end
+    set_color magenta
+    echo "System: $system"
     # Initialize chat_history for this session
     set -l chat_history ""
 
@@ -97,7 +104,7 @@ function chat
 
         # Append user message to history
         if test -z "$chat_history"
-            set chat_history "{\"role\":\"user\",\"content\":\"$user_message\"}"
+            set chat_history "{\"role\":\"system\",\"content\": \"$system\"},{\"role\":\"user\",\"content\":\"$user_message\"}"
         else
             set chat_history $chat_history ",{\"role\":\"user\",\"content\":\"$user_message\"}"
         end
@@ -108,15 +115,8 @@ function chat
         set -l opts \
             model="$model" \
             server="$server" \
-            system="You are a helpful AI assistant." \
+            system="$system" \
             messages="$messages"
-        # set -e opts
-        # set -l opts (dict.set model $model $opts)
-        # set -l opts (dict.set server $server $opts)
-        # set -l opts (dict.set system "You are a helpful AI assistant." $opts)
-        # set -l opts (dict.set messages "$messages" $opts)
-
-        # echo $opts
 
         set -l res (ollama_chat $opts | string collect)
 
