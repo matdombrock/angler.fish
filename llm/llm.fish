@@ -8,12 +8,18 @@ set model $LLM_MODEL
 if test -z "$model"
     set_color yellow
     echo "No \$LLM_MODEL set, defaulting to gemma3:4b"
+    echo "To set:"
+    set_color blue
+    echo "set -x LLM_MODEL https://localhost:11434"
     set model gemma3:4b
 end
 set server $LLM_SERVER
 if test -z "$server"
     set_color yellow
     echo "No \$LLM_SERVER set, defaulting to http://localhost:11434"
+    echo "To set:"
+    set_color blue
+    echo "set -x LLM_MODEL gemma3:4b"
     set server http://localhost:11434
 end
 
@@ -134,9 +140,9 @@ if test -z "$argv"
     echo "Commands:"
     echo "  set-model           Interactively set the LLM model."
     echo "  set-server <url>    Set the LLM server URL."
-    echo "  com <prompt>         Get a completion for the given prompt."
-    echo "  cmd <description>    Get a unix command for the given description."
-    echo "  chat                 Start an interactive chat session."
+    echo "  com <prompt>        Get a completion for the given prompt."
+    echo "  cmd <description>   Get a unix command for the given description."
+    echo "  chat <system>       Start an interactive chat session."
     exit 1
 end
 
