@@ -263,8 +263,19 @@ end
         set ff_lp_path $TMPDIR/ff_lp
     end
 
+    set base (dirname (realpath (status --current-filename)))
+
     # Set up fzf options
-    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border --preview="$fzf_preview_fn" --preview-window=right:60%:wrap
+    set fzf_options "--prompt=$(prompt_pwd)/" --ansi --layout=reverse --height=98% --border --preview-window=right:60%:wrap --preview='fish '$base'/finder.preview.fish \
+    "'$exit_str'" \
+    "'$goto_str'" \
+    "'$back_str'" \
+    "'$up_str'" \
+    "'$explode_str'" \
+    "'$unexplode_str'" \
+    "'$ff_kb_txt'" \
+    "'$ff_kb_path'" \
+    "'$file_viewer'" {}'
 
     # If we need to specify shell for fzf, do so
     if test $fzf_with_shell = true
