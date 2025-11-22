@@ -143,7 +143,7 @@ function fishfinder
     # Edit a file or dir
     function edit
         set -l target $argv[1]
-        set -l flags $argv[2]
+        set -l flags $argv[2..-1]
         if set -q VISUAL
             $VISUAL $target
             fishfinder $flags
