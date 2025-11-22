@@ -14,8 +14,38 @@ function tip
     echo (set_color bryellow)$argv(set_color normal)
 end
 function info
+    set -l color yellow
+    set -l out $argv[2]
+    # Handle git status codes
+    if test (string match 'git*' $argv[1])
+        if test "$argv[2]" = M
+            set color red
+            set out modified
+        else if test "$argv[2]" = A
+            set color green
+            set out added
+        else if test "$argv[2]" = D
+            set color red
+            set out deleted
+        else if test "$argv[2]" = R
+            set color cyan
+            set out renamed
+        else if test "$argv[2]" = C
+            set color cyan
+            set out copied
+        else if test "$argv[2]" = U
+            set color magenta
+            set out updated_but_unmerged
+        else if test "$argv[2]" = '??'
+            set color bryellow
+            set out untracked
+        else if test "$argv[2]" = ''
+            set out unchanged
+        end
+
+    end
     echo -n (set_color brgreen)$argv[1](set_color normal)"| "
-    echo (set_color bryellow)$argv[2](set_color normal)
+    echo (set_color $color)$out(set_color normal)
 end
 # Since we use the -F flag on ls we might have a trailing asterisk
 set clean_sel (echo $selection | string replace "*" "")
@@ -44,6 +74,7 @@ else if test -f $clean_sel
     echo " file"
     set_color brgreen
     # Not sure why info needs extra echo
+    info "git      " (git status --short $clean_sel | string trim | string split ' ')[1]
     info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
     info "lines    " (echo (wc -l $clean_sel | string split ' ')[1] | string trim)
     info "size     " (du -h $clean_sel | string split \t)[1]
@@ -57,6 +88,7 @@ else if test -d $clean_sel
     set_color --bold brred
     echo " directory"
     set_color brgreen
+    info "git      " (git status --short $clean_sel | string trim | string split ' ')[1]
     info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
     info "files    " (ls -A1 $clean_sel | wc -l | string trim)
     info "size     " (du -h $clean_sel | string split \t)[1]

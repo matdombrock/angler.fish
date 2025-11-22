@@ -185,7 +185,7 @@ function fishfinder
     set up_str ' .. up'
     set explode_str ' explode'
     set unexplode_str ' unexplode'
-    set cmd_str 'λ  '
+    set cmd_str 'λ| ' # 
 
     # Determine file viewer command
     set file_viewer cat
@@ -386,18 +386,25 @@ function fishfinder
         if not test -f $sel; and not test -d $sel
             set sel (pwd)
         end
+        echo
+        echo "$(set_color brmagenta)FishFinder $(set_color brgreen)Embedded $(set_color brred)Shell"
         set_color bryellow
-        echo "$cmd_str# Send 'b', 'back' or '' to return to fishfinder"
-        echo "$cmd_str# Sending 'exit' will return to the parent shell"
+        echo "Send $(set_color brmagenta)'b', 'back' or ''$(set_color bryellow) to return to fishfinder"
+        echo "Sending $(set_color brred)'exit'$(set_color bryellow) will return to the parent shell"
+        echo "You can start a full fish shell here with: $(set_color brgreen)'fish'$(set_color bryellow)"
         set_color cyan
-        echo "$cmd_str""\$p = $sel"
-        set cmd init
+        echo
+        echo "$cmd_str""set sel '$sel'"
+        set cmd "echo hello"
         set exit_cmds q quit back b ''
         while not contains $cmd $exit_cmds
-            set cmd (input.line $cmd_str | string replace -a \$p $sel)
-            set_color bryellow
-            echo "$cmd_str""$cmd"
-            set_color normal
+            set cmd (input.line $cmd_str)
+            if string match -q '*$sel*' $cmd
+                set cmd (echo $cmd | string replace -a \$sel $sel)
+                set_color bryellow
+                echo "$cmd_str""$cmd"
+                set_color normal
+            end
             eval $cmd
         end
         fishfinder $flags
