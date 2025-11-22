@@ -10,8 +10,12 @@ set file_viewer $argv[9]
 set selection $argv[10]
 
 function tip
-    echo (set_color brgreen) command(set_color normal):
+    echo (set_color brgreen) command(set_color normal)
     echo (set_color bryellow)$argv(set_color normal)
+end
+function info
+    echo -n (set_color brgreen)$argv[1](set_color normal)"| "
+    echo (set_color bryellow)$argv[2](set_color normal)
 end
 # Since we use the -F flag on ls we might have a trailing asterisk
 set clean_sel (echo $selection | string replace "*" "")
@@ -36,10 +40,31 @@ else if test "$selection" = "$explode_str"
 else if test "$selection" = "$unexplode_str"
     tip "Unexplode current directory"
 else if test -f $clean_sel
-    echo (set_color --bold bryellow) file(set_color normal):
+    set_color --bold bryellow
+    echo " file"
+    set_color brgreen
+    # Not sure why info needs extra echo
+    info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
+    info "lines    " (echo (wc -l $clean_sel | string split ' ')[1] | string trim)
+    info "size     " (du -h $clean_sel | string split \t)[1]
+    info "modified " (stat -c %y $clean_sel)
+    info "mime     " (file --mime-type -b $clean_sel)
+    set_color magenta
+    echo -------
+    set_color normal
     eval "$file_viewer $clean_sel"
 else if test -d $clean_sel
-    echo (set_color --bold brred) directory(set_color normal):
+    set_color --bold brred
+    echo " directory"
+    set_color brgreen
+    info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
+    info "files    " (ls -A1 $clean_sel | wc -l | string trim)
+    info "size     " (du -h $clean_sel | string split \t)[1]
+    info "modified " (stat -c %y $clean_sel)
+    info "mime     " (file --mime-type -b $clean_sel)
+    set_color magenta
+    echo -------
+    set_color normal
     ls --group-directories-first -A1 -F --color=always $clean_sel 2>/dev/null
 else if test -L $clean_sel
     echo (set_color --bold bryellow)symlink(set_color normal):
