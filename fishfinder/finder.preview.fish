@@ -77,6 +77,7 @@ else if test "$selection" = "$explode_str"
 else if test "$selection" = "$unexplode_str"
     tip "Unexplode current directory"
 else if test -f $clean_sel
+    set mime (file --mime-type -b $clean_sel 2>/dev/null)
     set_color --bold bryellow
     echo " file"
     set_color brgreen
@@ -86,10 +87,19 @@ else if test -f $clean_sel
     info "lines    " (echo (wc -l $clean_sel 2>/dev/null | string split ' ')[1] | string trim)
     info "size     " (du -h $clean_sel 2>/dev/null | string split \t)[1]
     info "modified " (stat -c %y $clean_sel 2>/dev/null)
-    info "mime     " (file --mime-type -b $clean_sel 2>/dev/null)
+    info "mime     " $mime
     set_color magenta
     echo -------
     set_color normal
+    if test $mime = image/png; or test $mime = image/jpg; or test $mime = image/jpeg; or test $mime = image/gif; or test $mime = image/bmp; or test $mime = image/webp
+        # Check if we have chafa installed
+        if not type -q chafa
+            echo "Chafa not installed. Please install chafa to preview images."
+            echo $clean_sel
+            return
+        end
+        set file_viewer chafa --size="$FZF_PREVIEW_COLUMNS"x
+    end
     eval "$file_viewer $clean_sel" 2>/dev/null
 else if test -d $clean_sel
     set_color --bold brred
