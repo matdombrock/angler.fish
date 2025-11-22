@@ -138,6 +138,25 @@ function fishfinder
         end
     end
 
+    # Edit a file or dir
+    function edit
+        set -l target $argv[1]
+        set -l flags $argv[2]
+        if set -q VISUAL
+            $VISUAL $target
+            fishfinder $flags
+            return
+        else if set -q EDITOR
+            $EDITOR $target
+            fishfinder $flags
+            return
+        else
+            echo "No editor set. Aborting edit."
+            fishfinder $flags
+            return
+        end
+    end
+
     # Echo if condition is false
     function echo_not
         set -l condition $argv[1]
@@ -361,23 +380,11 @@ function fishfinder
     if test (string match "edit:*" $sel)
         set sel (string replace "edit:" "" $sel)
         if test -d "$sel"; or test -f "$sel"
-            # This is a directory
-            if set -q VISUAL
-                $VISUAL $sel
-                fishfinder $flags
-                return
-            else if set -q EDITOR
-                $EDITOR $sel
-                fishfinder $flags
-                return
-            else
-                echo "No editor set. Aborting edit."
-                fishfinder $flags
-                return
-            end
+            edit $sel $flags
+            return
         else
-            # The user has likely selected a meta option by mistake
-            fishfinder $flags
+            # We dont have a valid selection so edit the current parent dir
+            edit . $flags
             return
         end
     end
@@ -569,22 +576,7 @@ function fishfinder
         return
     else if test -f $sel
         # This is a file
-        if set -q VISUAL
-            echo "Opening file with VISUAL editor: $VISUAL"
-            $VISUAL $sel
-            fishfinder $flags
-            return
-        else if set -q EDITOR
-            echo "Opening file with EDITOR: $EDITOR"
-            $EDITOR $sel
-            fishfinder $flags
-            return
-        else
-            echo "No editor set. Opening file with 'less'."
-            less $sel
-            fishfinder $flags
-            return
-        end
+        edit $sel $flags
     end
 end
 
