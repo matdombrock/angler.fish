@@ -399,13 +399,8 @@ function fishfinder
         set exit_cmds q quit back b ''
         while not contains $cmd $exit_cmds
             set cmd (input.line $cmd_str)
-            if string match -q '*$sel*' $cmd
-                set cmd (echo $cmd | string replace -a \$sel $sel)
-                set_color bryellow
-                echo "$cmd_str""$cmd"
-                set_color normal
-            end
-            eval $cmd
+            # Import aliases, set sel, and execute command
+            eval "source $base/../angler.alias.fish; set sel $sel; $cmd"
         end
         fishfinder $flags
         return
