@@ -7,6 +7,7 @@ FishFinder is a terminal file explorer with fuzzy searching using fzf.
 ## Requires
 
 - `fzf` 
+- `file`
 - `../_lib/input.fish` 
 
 > [!TIP]
