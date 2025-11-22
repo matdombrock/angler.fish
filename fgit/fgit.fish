@@ -3,7 +3,6 @@
 source (dirname (realpath (status --current-filename)))/../_lib/input.fish
 
 function section
-    echo
     echo (set_color -u normal)"$argv"(set_color -u normal)
     set_color normal
 end
@@ -17,6 +16,7 @@ else
     exit 1
 end
 
+echo
 section (set_color bryellow)" STATUS"
 set gstatus (git status -s)
 if test (count $gstatus) -eq 0
@@ -28,10 +28,13 @@ else
 end
 
 if test (count $argv) -eq 0
-    section (set_color magenta)" MESSAGE"
+    echo
+    section (set_color brmagenta)" MESSAGE"
+    set_color brblue
     echo "Enter commit message (empty to abort):"
     set msg (input.line "> ")
     if test -z "$msg"
+        set_color red
         echo No commit message provided
         exit 1
     end
@@ -39,6 +42,7 @@ else
     set msg $argv
 end
 
+echo
 section (set_color brgreen)" CONFIRM"
 set_color green
 echo $msg
