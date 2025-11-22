@@ -18,7 +18,10 @@ function info
     set -l out $argv[2]
     # Handle git status codes
     if test (string match 'git*' $argv[1])
-        if test "$argv[2]" = M
+        if test (string match 'fatal*' $argv[2])
+            set color yellow
+            set out "not git"
+        else if test "$argv[2]" = M
             set color red
             set out modified
         else if test "$argv[2]" = A
@@ -33,7 +36,7 @@ function info
         else if test "$argv[2]" = C
             set color cyan
             set out copied
-        else if test "$argv[2]" = U
+        else if test "$argv[2]" = UU
             set color magenta
             set out updated_but_unmerged
         else if test "$argv[2]" = '??'
@@ -48,7 +51,7 @@ function info
     echo (set_color $color)$out(set_color normal)
 end
 # Since we use the -F flag on ls we might have a trailing asterisk
-set clean_sel (echo $selection | string replace "*" "")
+set clean_sel (echo $selection | string replace "*" "" | string replace "@" "")
 if test $selection = $exit_str
     tip "Exit back to the shell"
     echo ""
@@ -78,26 +81,26 @@ else if test -f $clean_sel
     echo " file"
     set_color brgreen
     # Not sure why info needs extra echo
-    info "git      " (git status --short $clean_sel | string trim | string split ' ')[1]
-    info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
-    info "lines    " (echo (wc -l $clean_sel | string split ' ')[1] | string trim)
-    info "size     " (du -h $clean_sel | string split \t)[1]
-    info "modified " (stat -c %y $clean_sel)
-    info "mime     " (file --mime-type -b $clean_sel)
+    info "git      " (git status --short $clean_sel 2>/dev/null | string trim | string split ' ')[1]
+    info "info     " (echo $(ls -l $clean_sel 2>/dev/null | string split ' ')[1..5])
+    info "lines    " (echo (wc -l $clean_sel 2>/dev/null | string split ' ')[1] | string trim)
+    info "size     " (du -h $clean_sel 2>/dev/null | string split \t)[1]
+    info "modified " (stat -c %y $clean_sel 2>/dev/null)
+    info "mime     " (file --mime-type -b $clean_sel 2>/dev/null)
     set_color magenta
     echo -------
     set_color normal
-    eval "$file_viewer $clean_sel"
+    eval "$file_viewer $clean_sel" 2>/dev/null
 else if test -d $clean_sel
     set_color --bold brred
     echo " directory"
     set_color brgreen
-    info "git      " (git status --short $clean_sel | string trim | string split ' ')[1]
-    info "info     " (echo $(ls -l $clean_sel | string split ' ')[1..5])
-    info "files    " (ls -A1 $clean_sel | wc -l | string trim)
-    info "size     " (du -h $clean_sel | string split \t)[1]
-    info "modified " (stat -c %y $clean_sel)
-    info "mime     " (file --mime-type -b $clean_sel)
+    info "git      " (git status --short $clean_sel 2>/dev/null | string trim | string split ' ')[1]
+    info "info     " (echo $(ls -l $clean_sel 2>/dev/null | string split ' ')[1..5])
+    info "files    " (ls -A1 $clean_sel 2>/dev/null | wc -l | string trim)
+    info "size     " (du -h $clean_sel 2>/dev/null | string split \t)[1]
+    info "modified " (stat -c %y $clean_sel 2>/dev/null)
+    info "mime     " (file --mime-type -b $clean_sel 2>/dev/null)
     set_color magenta
     echo -------
     set_color normal

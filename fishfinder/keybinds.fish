@@ -11,7 +11,8 @@ kb view: ctrl-v
 kb goto: ctrl-g
 kb last: ctrl-l
 kb print: ctrl-p
-kb exec: ctrl-e
+kb exec: ctrl-t
+kb edit: ctrl-e
 kb open: ctrl-o
 kb copy: ctrl-y
 kb del: ctrl-d

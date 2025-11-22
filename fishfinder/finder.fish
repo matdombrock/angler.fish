@@ -40,6 +40,8 @@ function kb
         set action (spec "print:{}")
     else if test $action_id = exec:
         set action (spec "exec:{}")
+    else if test $action_id = edit:
+        set action (spec "edit:{}")
     else if test $action_id = open:
         set action (spec "open:{}")
     else if test $action_id = copy:
@@ -353,6 +355,31 @@ function fishfinder
         end
         fishfinder $flags
         return
+    end
+
+    # Handle edit: Open the file or directory in editor
+    if test (string match "edit:*" $sel)
+        set sel (string replace "edit:" "" $sel)
+        if test -d "$sel"; or test -f "$sel"
+            # This is a directory
+            if set -q VISUAL
+                $VISUAL $sel
+                fishfinder $flags
+                return
+            else if set -q EDITOR
+                $EDITOR $sel
+                fishfinder $flags
+                return
+            else
+                echo "No editor set. Aborting edit."
+                fishfinder $flags
+                return
+            end
+        else
+            # The user has likely selected a meta option by mistake
+            fishfinder $flags
+            return
+        end
     end
 
     # Handle del: Delete the file
