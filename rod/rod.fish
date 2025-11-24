@@ -3,8 +3,8 @@
 # NOTE: This file is intended to be sourced
 # This is required to set the prompt style
 
-set PROMPT default
-set rod_list default minimal replicat
+set -x PROMPT default
+set -x rod_list default minimal replicat
 
 function fish_prompt
     # Check if PROMPT is in rod_list
@@ -14,7 +14,7 @@ function fish_prompt
         _rod # Call with no args to get the list
         set_color normal
         # We cant continue without  having some kind of prompt here
-        set PROMPT default
+        set PROMPT -x default
     end
     source (dirname (realpath (status --current-filename)))/prompt/$PROMPT.fish
     _fish_prompt
@@ -31,7 +31,7 @@ function _rod
         end
         return
     end
-    set PROMPT $argv[1]
+    set -x PROMPT $argv[1]
 end
 
 # Create alias for easier listing
