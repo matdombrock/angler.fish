@@ -11,7 +11,7 @@ function fish_prompt
     if not contains $PROMPT $rod_list
         set_color red
         echo "Warning: PROMPT '$PROMPT' not found in rod_list. Reverting to 'default'."
-        rod # Call with no args to get the list
+        _rod # Call with no args to get the list
         set_color normal
         # We cant continue without  having some kind of prompt here
         set PROMPT default
