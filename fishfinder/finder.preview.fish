@@ -76,17 +76,17 @@ else if test "$selection" = "$explode_str"
     tip "Explode current directory (find . -type f)"
 else if test "$selection" = "$unexplode_str"
     tip "Unexplode current directory"
-else if test -f $clean_sel
-    set mime (file --mime-type -b $clean_sel 2>/dev/null)
+else if test -f "$clean_sel"
+    set mime (file --mime-type -b "$clean_sel" 2>/dev/null)
     set_color --bold bryellow
     echo " file"
     set_color brgreen
     # Not sure why info needs extra echo
-    info "git      " (git status --short $clean_sel 2>/dev/null | string trim | string split ' ')[1]
-    info "info     " (echo $(ls -l $clean_sel 2>/dev/null | string split ' ')[1..5])
-    info "lines    " (echo (wc -l $clean_sel 2>/dev/null | string split ' ')[1] | string trim)
-    info "size     " (du -h $clean_sel 2>/dev/null | string split \t)[1]
-    info "modified " (stat -c %y $clean_sel 2>/dev/null)
+    info "git      " (git status --short "$clean_sel" 2>/dev/null | string trim | string split ' ')[1]
+    info "info     " (echo $(ls -l "$clean_sel" 2>/dev/null | string split ' ')[1..5])
+    info "lines    " (echo (wc -l "$clean_sel" 2>/dev/null | string split ' ')[1] | string trim)
+    info "size     " (du -h "$clean_sel" 2>/dev/null | string split \t)[1]
+    info "modified " (stat -c %y "$clean_sel" 2>/dev/null)
     info "mime     " $mime
     set_color magenta
     echo -------
@@ -95,49 +95,49 @@ else if test -f $clean_sel
         # Check if we have chafa installed
         if not type -q chafa
             echo "Chafa not installed. Please install chafa to preview images."
-            echo $clean_sel
+            echo "$clean_sel"
             return
         end
         set file_viewer chafa --size="$FZF_PREVIEW_COLUMNS"x
     end
-    eval "$file_viewer $clean_sel" 2>/dev/null
-else if test -d $clean_sel
+    eval "$file_viewer '$clean_sel'" 2>/dev/null
+else if test -d "$clean_sel"
     set_color --bold brred
     echo " directory"
     set_color brgreen
-    info "git      " (git status --short $clean_sel 2>/dev/null | string trim | string split ' ')[1]
-    info "info     " (echo $(ls -l $clean_sel 2>/dev/null | string split ' ')[1..5])
-    info "files    " (ls -A1 $clean_sel 2>/dev/null | wc -l | string trim)
-    info "size     " (du -h $clean_sel 2>/dev/null | string split \t)[1]
-    info "modified " (stat -c %y $clean_sel 2>/dev/null)
-    info "mime     " (file --mime-type -b $clean_sel 2>/dev/null)
+    info "git      " (git status --short "$clean_sel" 2>/dev/null | string trim | string split ' ')[1]
+    info "info     " (echo $(ls -l "$clean_sel" 2>/dev/null | string split ' ')[1..5])
+    info "files    " (ls -A1 "$clean_sel" 2>/dev/null | wc -l | string trim)
+    info "size     " (du -h "$clean_sel" 2>/dev/null | string split \t)[1]
+    info "modified " (stat -c %y "$clean_sel" 2>/dev/null)
+    info "mime     " (file --mime-type -b "$clean_sel" 2>/dev/null)
     set_color magenta
     echo -------
     set_color normal
-    ls --group-directories-first -A1 -F --color=always $clean_sel 2>/dev/null
-else if test -L $clean_sel
+    ls --group-directories-first -A1 -F --color=always "$clean_sel" 2>/dev/null
+else if test -L "$clean_sel"
     echo (set_color --bold bryellow)symlink(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -e $clean_sel
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -e "$clean_sel"
     echo (set_color --bold bryellow)other(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -S $clean_sel
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -S "$clean_sel"
     echo (set_color --bold bryellow)socket(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -p $clean_sel
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -p "$clean_sel"
     echo (set_color --bold bryellow)pipe(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -b $clean_sel
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -b "$clean_sel"
     echo (set_color --bold bryellow)block device(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -c $clean_sel
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -c "$clean_sel"
     echo (set_color --bold bryellow)character device(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
-else if test -d $clean_sel = false and test -f $clean_sel = false
+    ls -l --color=always "$clean_sel" 2>/dev/null
+else if test -d "$clean_sel" = false and test -f "$clean_sel" = false
     echo (set_color --bold bryellow)non-standard file type(set_color normal):
-    ls -l --color=always $clean_sel 2>/dev/null
+    ls -l --color=always "$clean_sel" 2>/dev/null
 else
     echo No preview available.
-    echo $clean_sel
+    echo "$clean_sel"
     echo $selection
 end
