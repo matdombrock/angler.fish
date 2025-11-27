@@ -137,4 +137,3 @@ kb goto ctrl-d
 - Improve reload speed
 - Support multi-select
 - Select dir and exit command
-- Handle paths with spaces
