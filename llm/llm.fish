@@ -94,12 +94,12 @@ function models
     echo "set -x LLM_MODEL $model_name"
 end
 # Alias for models
-function list
-    models
-end
-function ls
-    models
-end
+# function list
+#     models
+# end
+# function ls
+#     models
+# end
 
 function com
     set -l opts \
@@ -111,13 +111,18 @@ function com
 end
 
 function cmd
+    set -l dir_listing (ls | string join '\n')
     set -l opts \
         prompt="$argv" \
         system="\
-The user will describe a unix command.\
-You will respond only with the requested command.\
-Your response will be executed directly in their terminal.\
-Here is the users system information: $(sysinfo)." \
+The user will request a unix command in natural language.\
+You will respond only with a valid, full unix command that fulfils the user's request.\
+Do not use markdown or code blocks.\
+Your response will be executed directly in the user's terminal.\
+User's system information: $(sysinfo). \
+User's pwd: $(pwd). \
+User's current directory listing: '$dir_listing'. \
+" \
         model="$model" \
         server="$server" \
         temperature=0.2
