@@ -20,6 +20,7 @@ set -l base (dirname (realpath (status --current-filename)))
 # Some files need to be sourced to work properly
 #
 source $base/rod/rod.fish
+source $base/sshl/sshl.fish
 
 # Helper to create aliases and build help text
 set _angler_alias_help_text "$(set_color brblue)Available Angler aliases:\n"
@@ -56,12 +57,14 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Adventure game" :adv "$base/games/adv.fish"
 :alias "Graphical Dice Roller" :dice "$base/games/dice.fish"
 :alias "SHARKS! game" :sharkz "$base/games/sharkz.fish"
+:alias "SSHL - local ssh" :sshl _sshl
 
 #
 # Misc tools
 #
 
 :alias "Reload fish config" :rlfish "source ~/.config/fish/config.fish"
+:alias Edit :e "$EDITOR ."
 # Useful for distrobox
 :alias "Distro info" :distro 'cat /etc/*-release | grep PRETTY_NAME | sed -e "s/PRETTY_NAME=//" -e "s/\"//g"'
 :alias "Distro full info" :distro_full "cat /etc/*-release"
