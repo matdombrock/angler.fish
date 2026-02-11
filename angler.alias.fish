@@ -6,6 +6,10 @@
 #
 # Usage:
 # source ~/path/to/angler.fish/angler.alias.fish
+# 
+# The `:alias` command:
+# Call :alias with no args to list the aliases
+# Call :alias with args to create a new alias
 
 # Automatically determine the base dir
 set -l base (dirname (realpath (status --current-filename)))
@@ -33,7 +37,10 @@ end
 
 _angler_alias "Create an angler style alias, list with no input" :alias _angler_alias
 
-:alias "Reload fish config" :rlfish "source ~/.config/fish/config.fish"
+#
+# Core
+#
+
 :alias "Reload angler aliases" :rlangler "source $base/angler.alias.fish"
 :alias "Update angler repo" :upangler "cd $base && git pull && echo \$(set_color green)'Angler updated!'"
 :alias "Angler TackleBox" :angler "$base/angler.fish"
@@ -49,3 +56,13 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Adventure game" :adv "$base/games/adv.fish"
 :alias "Graphical Dice Roller" :dice "$base/games/dice.fish"
 :alias "SHARKS! game" :sharkz "$base/games/sharkz.fish"
+
+#
+# Misc tools
+#
+
+:alias "Reload fish config" :rlfish "source ~/.config/fish/config.fish"
+# Useful for distrobox
+:alias "Distro info" :distro 'cat /etc/*-release | grep PRETTY_NAME | sed -e "s/PRETTY_NAME=//" -e "s/\"//g"'
+:alias "Distro full info" :distro_full "cat /etc/*-release"
+:alias "Where am I" :where 'echo $(whoami)@$(hostname) - $(:distro)'
