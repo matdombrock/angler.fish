@@ -70,3 +70,4 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Distro full info" :distro_full "cat /etc/*-release"
 :alias "Where am I" :where 'echo $(whoami)@$(hostname) - $(:distro)'
 :alias "Echo public IP" :ip 'curl ifconfig.me'
+:alias "Get the weather from wittr.in" :weather 'curl wttr.in'
