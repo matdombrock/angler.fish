@@ -69,3 +69,4 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Distro info" :distro 'cat /etc/*-release | grep PRETTY_NAME | sed -e "s/PRETTY_NAME=//" -e "s/\"//g"'
 :alias "Distro full info" :distro_full "cat /etc/*-release"
 :alias "Where am I" :where 'echo $(whoami)@$(hostname) - $(:distro)'
+:alias "Echo public IP" :ip 'curl ifconfig.me'
