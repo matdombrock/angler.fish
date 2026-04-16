@@ -20,7 +20,6 @@ set -l base (dirname (realpath (status --current-filename)))
 # Some files need to be sourced to work properly
 #
 source $base/rod/rod.fish
-source $base/sshl/sshl.fish
 
 # Helper to create aliases and build help text
 set _angler_alias_help_text "$(set_color brblue)Available Angler aliases:\n"
@@ -36,7 +35,7 @@ function _angler_alias
     alias $name=$cmd
 end
 
-_angler_alias "Create an angler style alias, list with no input" :alias _angler_alias
+_angler_alias "Create an angler style alias. List with no input." :alias _angler_alias
 
 #
 # Core
@@ -57,7 +56,12 @@ _angler_alias "Create an angler style alias, list with no input" :alias _angler_
 :alias "Adventure game" :adv "$base/games/adv.fish"
 :alias "Graphical Dice Roller" :dice "$base/games/dice.fish"
 :alias "SHARKS! game" :sharkz "$base/games/sharkz.fish"
-:alias "SSHL - local ssh" :sshl _sshl
+
+#
+# Smolt
+#
+:alias "SSHL - local ssh" :sshl "$base/sshl/sshl.fish"
+:alias "EZ SSHFS script" :ezsshfs "$base/smolt/ezsshfs.fish"
 
 #
 # Misc tools
