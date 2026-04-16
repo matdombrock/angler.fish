@@ -1,12 +1,19 @@
 #!/usr/bin/env fish
 
+# If the mount gets stuck use:
+# fusermount -uz $HOME/<mountpoint>
+
 # Check for argument
-if test (count $argv) -ne 1
-    echo "Usage: (basename (status -f)) <user@host>"
+if test (count $argv) -lt 1 -o (count $argv) -gt 2
+    echo "Usage: (basename (status -f)) <user@host> [remote_dir]"
     exit 1
 end
 
 set target $argv[1]
+set remote_dir "/"
+if test (count $argv) -eq 2
+    set remote_dir $argv[2]
+end
 
 # Extract host part after '@'
 set host (string split -m1 "@" $target)[2]
@@ -36,9 +43,9 @@ if not test -d $mountpoint
     end
 end
 
-# Mount via sshfs (default to home directory)
-echo "Mounting $target: to $mountpoint..."
-sshfs $target: $mountpoint
+# Mount via sshfs (use specified remote_dir or default to /)
+echo "Mounting $target:$remote_dir to $mountpoint..."
+sshfs $target:$remote_dir $mountpoint
 
 # Confirm by listing contents
 echo "Contents of $mountpoint:"
