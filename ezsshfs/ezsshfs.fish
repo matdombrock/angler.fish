@@ -1,13 +1,5 @@
 #!/usr/bin/env fish
 
-# A simple script to mount a remote filesystem via sshfs
-# Usage:
-# source this file to get the :sshfs command
-# :sshfs user@host [remote_dir]
-
-# If the mount gets stuck use:
-# fusermount -uz $HOME/<mountpoint>
-
 # Check for argument
 if test (count $argv) -lt 1 -o (count $argv) -gt 2
     echo "Usage: (basename (status -f)) <user@host> [remote_dir]"
