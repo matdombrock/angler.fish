@@ -59,6 +59,7 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "SSHL - local ssh" :sshl "$base/sshl/sshl.fish"
 :alias "EZ SSHFS script" :ezsshfs "$base/ezsshfs/ezsshfs.fish"
 :alias "Ollam ls (+)" :ollamals "$base/ollama/ollama-ls.fish"
+:alias "Convert Video" :convertvideo "$base/convert-video/convert-video.fish"
 
 
 #
