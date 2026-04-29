@@ -2,5 +2,5 @@
 source (dirname (realpath (status --current-filename)))/llm.core.fish
 
 set prompt (string join " " $argv)
-set res (chat 0.2 $prompt)
-echo -e $res
+set res (chat 20.0 $prompt)
+echo $res
