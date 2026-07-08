@@ -52,7 +52,6 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "Reel fuzzy package manager" :reel "$base/reel/reel.fish"
 :alias "Quick git commit helper" :fgit "$base/fgit/fgit.fish"
 :alias "Manage fish shell prompt styles" :rod _rod
-:alias "Interact with LLMs" :llm "$base/llm/llm.fish"
 :alias "Adventure game" :adv "$base/games/adv.fish"
 :alias "Graphical Dice Roller" :dice "$base/games/dice.fish"
 :alias "SHARKS! game" :sharkz "$base/games/sharkz.fish"
@@ -61,6 +60,7 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "Ollam ls (+)" :ollamals "$base/ollama/ollama-ls.fish"
 :alias "Convert Video" :convertvideo "$base/video/convert-video.fish"
 :alias "PNG 2 Video" :png2video "$base/video/png2video.fish"
+:alias "Interact with LLMs" :llm "$base/llm/llm.fish"
 :alias "LLM Quick" :llm "$base/llm/llm.quick.fish"
 :alias "LLM Shell Command" :llmsh "$base/llm/llm.sh.fish"
 

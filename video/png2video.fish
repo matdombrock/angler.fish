@@ -102,6 +102,16 @@ if test (count $png_files) -eq 0
 end
 
 echo "Found "(count $png_files)" PNG files."
+
+# Detect alpha channel from the first PNG
+set -l has_alpha false
+set -l pix_fmt (ffprobe -v error -select_streams v:0 -show_entries stream=pix_fmt -of default=noprint_wrappers=1 $png_files[1] 2>/dev/null)
+if string match -qr 'a' -- $pix_fmt
+    set has_alpha true
+    echo "Alpha channel detected, using VP9 codec with transparency."
+    echo "Note: Use a .webm output file (e.g. -o out.webm) to preserve the alpha channel."
+end
+
 echo "Generating '$output_file' at $fps fps..."
 
 # Build a temporary file list for ffmpeg
@@ -113,9 +123,15 @@ for f in $png_files
 end
 
 # Run ffmpeg
-ffmpeg -y -r $fps -f concat -safe 0 -i "$tmp_list" \
-    -c:v libx264 -pix_fmt yuv420p -preset medium -crf 18 \
-    "$output_file"
+if "$has_alpha"
+    ffmpeg -y -r $fps -f concat -safe 0 -i "$tmp_list" \
+        -c:v libvpx-vp9 -pix_fmt yuva420p -crf 18 -deadline good \
+        "$output_file"
+else
+    ffmpeg -y -r $fps -f concat -safe 0 -i "$tmp_list" \
+        -c:v libx264 -pix_fmt yuv420p -preset medium -crf 18 \
+        "$output_file"
+end
 
 set -l ffmpeg_status $status
 
