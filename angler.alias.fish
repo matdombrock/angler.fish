@@ -59,7 +59,8 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "SSHL - local ssh" :sshl "$base/sshl/sshl.fish"
 :alias "EZ SSHFS script" :ezsshfs "$base/ezsshfs/ezsshfs.fish"
 :alias "Ollam ls (+)" :ollamals "$base/ollama/ollama-ls.fish"
-:alias "Convert Video" :convertvideo "$base/convert-video/convert-video.fish"
+:alias "Convert Video" :convertvideo "$base/video/convert-video.fish"
+:alias "PNG 2 Video" :png2video "$base/video/png2video.fish"
 :alias "LLM Quick" :llm "$base/llm/llm.quick.fish"
 :alias "LLM Shell Command" :llmsh "$base/llm/llm.sh.fish"
 
