@@ -79,7 +79,7 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "Echo public IP" :ip 'curl ifconfig.me'
 :alias "Get the weather from wittr.in" :weather 'curl wttr.in'
 # Must wrap in a function to avoid double output
-function _angler_portls
+function _angler_portfind
     lsof -ti :$argv[1]
 end
 :alias "Find a process using a given port" :portfind _angler_portfind
