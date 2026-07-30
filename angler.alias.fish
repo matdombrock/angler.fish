@@ -84,6 +84,6 @@ function _angler_portfind
 end
 :alias "Find a process using a given port" :portfind _angler_portfind
 function _angler_portkill
-    echo kill -9 (lsof -ti :$argv[1])
+    lsof -ti :argv[1] && kill -9 $(lsof -ti :$argv[1])
 end
 :alias "Kill a process using a given port" :portkill _angler_portkill
