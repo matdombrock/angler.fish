@@ -78,3 +78,12 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "Where am I" :where 'echo $(whoami)@$(hostname) - $(:distro)'
 :alias "Echo public IP" :ip 'curl ifconfig.me'
 :alias "Get the weather from wittr.in" :weather 'curl wttr.in'
+# Must wrap in a function to avoid double output
+function _angler_portls
+    lsof -ti :$argv[1]
+end
+:alias "Find a process using a given port" :portfind _angler_portfind
+function _angler_portkill
+    echo kill -9 (lsof -ti :$argv[1])
+end
+:alias "Kill a process using a given port" :portkill _angler_portkill
