@@ -64,8 +64,9 @@ _angler_alias "Create an angler style alias. List with no input." :alias _angler
 :alias "LLM Quick" :llm "$base/llm/llm.quick.fish"
 :alias "LLM Shell Command" :llmsh "$base/llm/llm.sh.fish"
 :alias "Digital Ocean Spaces Mount" :mountbucket "$base/dospaces/mountspaces.fish"
-:alias "TSS with piper. Use `-h` for help" :piper "$base/piper/piper.fish"
-
+:alias "TTS with piper. Use `-h` for help" :piper "$base/piper/piper.fish"
+:alias "Pi Agent tools. Use `-h` for help" :pi "$base/pi/pi.fish"
+:alias "Pi Agent voice chat" :pichat "$base/pi/voice-chat.fish"
 
 #
 # Misc tools
