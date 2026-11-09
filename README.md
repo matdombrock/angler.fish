@@ -6,6 +6,8 @@ A stream-lined shell framework for humans.
 
 Alpha - Things will break, don't build on this yet!
 
+---
+
 ## Use
 
 ### Install
@@ -27,6 +29,8 @@ fish install.fish
 fish uninstall.fish
 ```
 
+---
+
 ## The `cmd.md` File Spec
 
 ```
@@ -46,29 +50,41 @@ $param2 the second param
 
 ### Command Name `# *`
 
+- Matching `# *`
+- Required
+- One per file
 - Defines the name of the command
 - Must be a valid command name
-- One per file
-
-### Parameters `$*`
-
-- Parameters may have a description after the param name
-- Must be a valid fish param name
-
-### Requirement `! *`
-
-- This is used to ensure a given program is installed and in `$PATH` before continuing
 
 ### Code (backtick) 
 
+- Matching `\`string\`` `<backtick>string<backtick>`
+- Required
 - A line starting and ending with a backtick is treated as the code which will be executed by the wrapper
 - Params may be injected at any point in the command string
 - One per file
 
 ### Description
 
+- Matching no other condition (normal line)
+- Required
 - Lines beginning with no special characters are treated as description lines
 - Currently one per file
+
+### Parameters `$*`
+
+- Matching `$*`
+- Optional
+- Parameters may have a description after the param name
+- Must be a valid fish param name
+
+### Requirement `! *`
+
+- Matching `! *`
+- Optional
+- This is used to ensure a given program is installed and in `$PATH` before continuing
+
+---
 
 ## Command Source Directory Structure
 
