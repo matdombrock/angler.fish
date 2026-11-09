@@ -46,27 +46,29 @@ $param2 the second param
 
 ### Command Name `# *`
 
-One per file.
+- Defines the name of the command
+- Must be a valid command name
+- One per file
 
-### Param `$*`
+### Parameters `$*`
 
-Params may have a description after the param name.
+- Parameters may have a description after the param name
+- Must be a valid fish param name
 
 ### Requirement `! *`
 
-This is used to ensure a given program is installed and in `$PATH` before continuing.
+- This is used to ensure a given program is installed and in `$PATH` before continuing
 
-### Code `\`` (backtick) 
+### Code (backtick) 
 
-The code which will be executed by the wrapper.
-
-Params may be injected at any point in the command string.
+- A line starting and ending with a backtick is treated as the code which will be executed by the wrapper
+- Params may be injected at any point in the command string
+- One per file
 
 ### Description
 
-Lines beginning with no special characters are treated as description lines.
-
-Currently one per file.
+- Lines beginning with no special characters are treated as description lines
+- Currently one per file
 
 ## Command Source Directory Structure
 
@@ -85,15 +87,13 @@ Currently the *entire* `./cmds` dir is copied to `~/.config/fish/functions/:ang`
 
 You can access all of your resources as needed by referencing this path.
 
-### Converted Files
-
+### Compiled Files
 
 All:
 
 - Files in a sub dir matching the name `cmd.md`
 - Files in the top level matching the pattern `*.cmd.md`
 
-Are converted into wrapper functions.
+Are compiled into fish wrapper functions.
 
 They are automatically prefixed with `:`.
-
