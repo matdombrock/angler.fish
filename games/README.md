@@ -1,3 +1,0 @@
-# Games
-
-A collection of small games
