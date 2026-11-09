@@ -4,7 +4,9 @@
 source $ANG/lib/core.fish
 set ANG ~/.config/fish/functions/:ang
 
-set sel (cat "$ANG/docs.md" | fzf)
+set fzfopt --with-shell "fish -c" --preview "'"$ANG/lscmd/fzfpre.fish"' {}" --preview-window=right,60%
+
+set sel (cat "$ANG/docs.md" | fzf $fzfopt)
 set cmd (string split "|" $sel)[1]
 if test -z "$cmd"
     echo (sc r)invalid cmd!

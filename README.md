@@ -2,6 +2,8 @@
 
 A stream-lined shell framework for humans.
 
+A tool for building a library of friendly front-ends for stuff you want your computer to do.
+
 ## Status
 
 Alpha - Things will break, don't build on this yet!
