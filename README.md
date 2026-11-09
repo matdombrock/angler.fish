@@ -4,6 +4,20 @@ A stream-lined shell framework for humans.
 
 A tool for building a library of friendly front-ends for stuff you want your computer to do.
 
+## Features
+
+- Ensure required programs are installed before running tools
+- Use "smart" param handling (a thing I made up but its cool)
+- Automatic documentation
+- Automatic fuzzy launcher
+- Proper lazy loading
+
+### Planned
+
+- Required params
+- Default params
+- Command aliases
+
 ## Status
 
 Alpha - Things will break, don't build on this yet!
