@@ -58,7 +58,7 @@ $param2 the second param
 
 ### Code (backtick) 
 
-- Matching `\`string\`` `<backtick>string<backtick>`
+- Matching `[backtick]string[backtick]`
 - Required
 - A line starting and ending with a backtick is treated as the code which will be executed by the wrapper
 - Params may be injected at any point in the command string
