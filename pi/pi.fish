@@ -2,7 +2,7 @@
 
 function pi_chat
     pi \
-        --no-extensions -e ~/.pi/agent/extensions/web \
+        --no-extensions -e ~/.pi/agent/extensions/web-tools -e ~/.pi/agent/extensions/lmstudio-remote \
         --tools web_fetch,web_search \
         --no-skills \
         --system-prompt "You are a helpful assistant named r33! You have a web_search and a web_fetch tool."
@@ -29,6 +29,7 @@ function pi_quick
     # Join all arguments as a single string to mimic "$*"
     set -l prompt (string join ' ' $argv)
     pi \
+        -ne \
         --no-extensions \
         --no-tools \
         --no-skills \
@@ -49,15 +50,14 @@ set -l mode $argv[1]
 set -e argv[1]
 
 switch $mode
+    case c
     case chat
         pi_chat $argv
-
+    case quick
+    case q
+        pi_quick $argv
     case cli
         pi_cli $argv
-
-    case quick
-        pi_quick $argv
-
     case -h
         help
     case '*'

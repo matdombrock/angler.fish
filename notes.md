@@ -1,3 +1,7 @@
+# better way to get current file path
+    set here (dirname (status filename))
+
+
 # Ideas
 
 ! Aquarium
