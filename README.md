@@ -21,13 +21,54 @@ fish install.fish
 :lscmds
 ```
 
-## Uninstall
+### Uninstall
 
 ```fish
 fish uninstall.fish
 ```
 
-## Cmds Structure
+## The `cmd.md` File Spec
+
+```
+# cmd_name
+
+description text
+
+$param1 the first param
+
+$param2 the second param
+
+! req_cmd
+
+`some_cmd $param1 $param2`
+
+```
+
+### Command Name `# *`
+
+One per file.
+
+### Param `$*`
+
+Params may have a description after the param name.
+
+### Requirement `! *`
+
+This is used to ensure a given program is installed and in `$PATH` before continuing.
+
+### Code `\`` (backtick) 
+
+The code which will be executed by the wrapper.
+
+Params may be injected at any point in the command string.
+
+### Description
+
+Lines beginning with no special characters are treated as description lines.
+
+Currently one per file.
+
+## Command Source Directory Structure
 
 ```
 ./cmds
