@@ -7,16 +7,33 @@ A tool for building a library of friendly front-ends for stuff you want your com
 ## Features
 
 - Ensure required programs are installed before running tools
+    - You can safely depend on `bat`
 - Use "smart" param handling (a thing I made up but its cool)
+    - Stop worrying about param handling
+    - Missing params are handled automatically
 - Automatic documentation
+    - The documentation and source are essentially the same thing
+    - A docs.md is automatically generated on each build
 - Automatic fuzzy launcher
+    - All commands are available in the launcher with no extra setup
 - Proper lazy loading
+    - Nothing is loaded until you need it
 
 ### Planned
 
 - Required params
+    - Some commands are required, some optional
 - Default params
+    - Missing params fall back to defaults
 - Command aliases
+    - Shortcut names for registered commands
+- Black/white list commands from build
+    - Control what gets built
+- User commands
+    - Add your own commands outside of the git repo
+- World domination
+    - Or maybe just shell domination?
+    - We'll see where it goes
 
 ## Status
 
