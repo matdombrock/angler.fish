@@ -1,6 +1,6 @@
 # angler.fish
 
-A stream-lined shell framework for humans, made with <3 by other humans.
+A *stream*lined shell framework for humans who still actually use computers. Made with <3 by other humans.
 
 A tool for building a library of friendly front-ends for stuff you want your computer to do.
 
@@ -29,6 +29,8 @@ A tool for building a library of friendly front-ends for stuff you want your com
     - Shortcut names for registered commands
 - Black/white list commands from build
     - Control what gets built
+- Support multiple commands per sub dir
+- Support multiple commands per file
 - World domination
     - Or maybe just shell domination?
     - We'll see where it goes
@@ -107,6 +109,8 @@ $param2=3 the second param with a default value of 3
 - Matching `$*`
 - Optional
 - Parameters may have a description after the param name
+- The param line may NOT contain `:` anywhere in the line
+    - This includes the name of the param
 - Default params are specified like `$param=123`
     - Default param values currently can not contain spaces (even wrapped in quotes)
 - Must be a valid fish param name
