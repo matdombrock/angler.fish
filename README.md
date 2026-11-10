@@ -26,6 +26,7 @@ A tool for building a library of friendly front-ends for stuff you want your com
 
 ### Planned
 
+- Ensure env vars are set
 - Command aliases
     - Shortcut names for registered commands
 - Black/white list commands from build
@@ -157,6 +158,21 @@ All:
 Are compiled into fish wrapper functions.
 
 They are automatically prefixed with `:`.
+
+---
+
+## Library Usage
+
+You can find the core library files in `./lib`, these are available automatically to every other command. 
+
+Just call the relevant function, no need to source anything.
+
+For example, to get one character of input in your script, do:
+
+```fish
+set res (input.char "Choose a char")
+echo $res
+```
 
 ---
 
