@@ -29,6 +29,7 @@ A tool for building a library of friendly front-ends for stuff you want your com
     - Shortcut names for registered commands
 - Black/white list commands from build
     - Control what gets built
+- Support multiple requirements on a single line
 - Support multiple commands per sub dir
 - Support multiple commands per file
 - World domination
