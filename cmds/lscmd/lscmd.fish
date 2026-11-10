@@ -16,6 +16,7 @@ echo (sc g)$cmd
 # Send ANG_ECHO to print instead of eval
 # Build the expression
 set exp (eval "set -x ANG_ECHO 1; $cmd")
+echo ""
 echo (sc g)λ $exp
 function action
     set -l spl (string split '' $argv[1])

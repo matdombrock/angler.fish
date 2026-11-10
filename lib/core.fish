@@ -30,12 +30,23 @@ end
 # Handle params
 # Interactively if needed
 function param
-    set -l q $argv[1]
-    set -l v $argv[2]
-    if test -z "$v"
-        read -P "$(sc y)\$$q: " v
+    set -l pname $argv[1]
+    set -l desc $argv[2]
+    set -l curval $argv[3]
+    set -l defval $argv[4]
+    set -l pmpt (sc b)\n
+    set -l pmpt $pmpt$desc\n
+    set -l pmpt $pmpt(sc y)\$$pname:' '
+    if test -z "$curval"
+        if test -z "$defval" # No default
+            read -P "$(echo -e $pmpt)" curval
+        else
+            echo "$defval"
+            return 0
+        end
+
     end
-    echo $v
+    echo $curval
 end
 
 # Ensure an application is installed and in $PATH

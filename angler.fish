@@ -10,7 +10,6 @@ function convert
     set cmdname
     set desc
     set params
-    set paramsfull
     set reqs
     set code
     # Extract
@@ -22,8 +21,7 @@ function convert
             set cmdname (string replace "# " "" $line)
         else if string match -q "\$*" "$line" # params
             set -l param (string split " " $line)[1]
-            set params $params $param
-            set paramsfull "$paramsfull:$line"
+            set params "$params:$line"
         else if string match -q "!*" "$line" # reqs
             set -l req (string trim (string replace "!" "" "$line"))
             set reqs $reqs $req
@@ -42,9 +40,15 @@ function convert
         set fn $fn$tab"if not ensure \"$req\"; return; end\n"
     end
     set -l i 1
-    for param in $params
-        set param (string replace "\$" "" $param)
-        set fn $fn$tab"set $param (param $param \$argv[$i])\n"
+    for param in (string split ":" $params)
+        if test -z "$param"
+            continue
+        end
+        set split (string split " " $param)
+        set paramname $split[1]
+        set paramname (string replace "\$" "" $paramname)
+        set desc $split[2..]
+        set fn $fn$tab"set $paramname (param $paramname \"$desc\" \$argv[$i])\n"
         set i (math $i + 1)
     end
     set -l fn $fn$tab"if test \"\$ANG_ECHO\" = 1\n"
@@ -57,7 +61,7 @@ function convert
     # Write
     set opth (string replace ".cmd.fish" ".fish" "$bdir/:$cmdname.fish")
     echo -e "$fn" >$opth
-    echo ":$cmdname|$desc|$paramsfull" >>$bdir/:ang/docs.md
+    echo ":$cmdname|$desc|$params" >>$bdir/:ang/docs.md
 end
 
 # Build all cmds in given dir
