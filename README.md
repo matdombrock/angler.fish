@@ -183,3 +183,19 @@ You can put your own private user commands in `./cmds_user/`.
 These will be built when `angler.fish` is run in the same was we build the commands in `./cmds/`.
 
 The files in this directory are not tracked by git. 
+
+---
+
+## Programs vs Scripts
+
+What's the line between a "program", "script" and "command"? 
+
+The short answer is "nothing really". Its a continuum and a matter of scale. 
+
+When exactly does a command turn into a script? Is it when it has multiple lines?
+
+When exactly does a script turn into a program? Is it when it has multiple files? Error handling?
+
+For the purposes of `angler.fish`, there is no distinction. Instead we have the concept of a 'wrapper' which is an interface intended for humans to use directly. No AI, not (really) other scripts. Other things can use these, if you want them to, but ultimately they are intended to be used by humans. 
+
+A 'wrapper' must be expressed as a single line of fish. Anything more complex that that is... something else, and it belongs in a supplementary file.
