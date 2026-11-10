@@ -1,3 +1,6 @@
 notes.md
 todo.md
 .build
+
+cmds_user/*
+!cmds_user/.gitkeep

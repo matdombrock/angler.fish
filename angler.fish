@@ -25,7 +25,7 @@ function convert
             set params $params $param
             set paramsfull "$paramsfull:$line"
         else if string match -q "!*" "$line" # reqs
-            set -l req (string trim (string replace "!" "" "$line")) 
+            set -l req (string trim (string replace "!" "" "$line"))
             set reqs $reqs $req
         else if string match -q "`*" "$line" # code
             set code (string replace -a "`" "" $line)
@@ -86,14 +86,19 @@ function buildcmds
     end
 end
 
+# Set up
 set bdir $here/.build
 mkdir -p $bdir
 rm -rf $bdir/*
 mkdir -p $bdir/:ang
 
-# buildcmds lib
+# Copy lib
 cp -r $here/lib $bdir/:ang/
-buildcmds $argv[1]
+
+# Build main commands
+buildcmds ./cmds
+# Build user commands
+buildcmds ./cmds_user
 
 # pagga
 echo -e (sc g)"

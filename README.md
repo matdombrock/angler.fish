@@ -6,18 +6,20 @@ A tool for building a library of friendly front-ends for stuff you want your com
 
 ## Features
 
-- Ensure required programs are installed before running tools
-    - You can safely depend on `bat`
-- Use "smart" param handling (a thing I made up but its cool)
-    - Stop worrying about param handling
-    - Missing params are handled automatically
 - Automatic documentation
     - The documentation and source are essentially the same thing
     - A docs.md is automatically generated on each build
 - Automatic fuzzy launcher
     - All commands are available in the launcher with no extra setup
+- Ensure required programs are installed before running tools
+    - You can safely depend on `bat`
+- Use "smart" param handling (a thing I made up but its cool)
+    - Stop worrying about param handling
+    - Missing params are handled automatically
 - Proper lazy loading
     - Nothing is loaded until you need it
+- User commands
+    - Add your own commands outside of the git repo
 
 ### Planned
 
@@ -29,8 +31,6 @@ A tool for building a library of friendly front-ends for stuff you want your com
     - Shortcut names for registered commands
 - Black/white list commands from build
     - Control what gets built
-- User commands
-    - Add your own commands outside of the git repo
 - World domination
     - Or maybe just shell domination?
     - We'll see where it goes
@@ -46,7 +46,7 @@ Alpha - Things will break, don't build on this yet!
 ### Install
 
 ```fish
-fish angler.fish cmds
+fish angler.fish
 fish install.fish
 ```
 
@@ -146,3 +146,13 @@ All:
 Are compiled into fish wrapper functions.
 
 They are automatically prefixed with `:`.
+
+---
+
+## User Commands
+
+You can put your own private user commands in `./cmds_user/`. 
+
+These will be built when `angler.fish` is run in the same was we build the commands in `./cmds/`.
+
+The files in this directory are not tracked by git. 
