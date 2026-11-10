@@ -2,11 +2,12 @@ set here (path dirname (realpath (status filename)))
 source $here/lib/core.fish
 
 set ANG_PARAM_DELIM ":"
+set ANG_PARAM_EXPAND "..."
 
 # Convert a single cmd file
 function convert
     set lines (cat $argv[1])
-    set opth "$argv[2]"
+    set opth "$argv[2]" # Output path
     set opth (path change-extension ".fish" $opth)
     set tab "    "
     set cmdname
@@ -38,22 +39,32 @@ function convert
     set -l fn $fn"set ANG ~/.config/fish/functions/:ang\n"
     set -l fn $fn"source \$ANG/lib/core.fish\n\n"
     set -l fn $fn"function :$cmdname\n"
+    ## Construct reqs
     for req in $reqs
         set fn $fn$tab"if not ensure \"$req\"; return; end\n"
     end
     set -l i 1
+    ## Construct params
     for param in (string split $ANG_PARAM_DELIM $params)
         if test -z "$param"
             continue
         end
         set -l split (string split " " $param)
-        set -l paramname (string split = $split[1])[1]
+        set -l paramsplit (string split = $split[1])
+        set -l paramname $paramsplit[1]
         set -l paramname (string replace "\$" "" $paramname)
-        set -l defval (string split = $split[1])[2]
+        ## Check for expansion
+        set -l argstr "$i"
+        if string match -q "*$ANG_PARAM_EXPAND*" "$paramname"
+            set argstr "$i.."
+            set paramname (string replace "$ANG_PARAM_EXPAND" "" "$paramname")
+        end
+        set -l defval $paramsplit[2]
         set -l pdesc $split[2..]
-        set fn $fn$tab"set $paramname (param $paramname \"$pdesc\" \"\$argv[$i]\" \"$defval\")\n"
+        set fn $fn$tab"set $paramname (param $paramname \"$pdesc\" \"\$argv[$argstr]\" \"$defval\")\n"
         set i (math $i + 1)
     end
+    ## Construct logic 
     set -l fn $fn$tab"if test \"\$ANG_ECHO\" = 1\n"
     set -l fn $fn$tab$tab"echo $code\n" # no quotes needed
     set -l fn $fn$tab"else\n"

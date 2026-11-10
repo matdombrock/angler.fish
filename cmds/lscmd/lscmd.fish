@@ -1,12 +1,18 @@
 #!/usr/bin/env fish
 # List registered commands
 
-source $ANG/lib/core.fish
 set ANG ~/.config/fish/functions/:ang
+source $ANG/lib/core.fish
 
-set fzfopt --with-shell "fish -c" --preview "'"$ANG/lscmd/fzfpre.fish"' {}" --preview-window=right,60%
+set docs (cat "$ANG/docs.md")
+set lst
+for doc in $docs
+    set split (string split "|" "$doc")
+    set lst $lst "$split[1] $split[2]"
+end
 
-set sel (cat "$ANG/docs.md" | fzf $fzfopt)
+set fzfopt --with-shell "fish -c" --preview "'"$ANG/lscmd/fzfpre.fish"' {}" --preview-window=down,30%
+set sel (echo -e (string join "\n" $lst) | fzf $fzfopt)
 set cmd (string split "|" $sel)[1]
 if test -z "$cmd"
     echo (sc r)invalid cmd!

@@ -112,9 +112,14 @@ $param2=3 the second param with a default value of 3
 - Parameters may have a description after the param name
 - The param line may NOT contain `:` anywhere in the line
     - This includes the name of the param
-- Default params are specified like `$param=123`
+- Default params are defined like `$param=123`
     - Default param values currently can not contain spaces (even wrapped in quotes)
+- Expanded params (fish `argv[1..]`) are defined like `$param...` 
+    - Attempting to expand multiple params is an error
+    - Expanded params can can also have default values `$param...=1`
+    - Expanded params should NOT include the `...` suffix when used in the code block
 - Must be a valid fish param name
+    - With the exception of `...`
 
 ### Requirement `! *`
 

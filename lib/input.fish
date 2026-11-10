@@ -1,3 +1,5 @@
+# Get a line
+# Returns on enter
 function input.line
     set -l msg $argv
     read -P $msg(set_color brwhite) choice
@@ -7,6 +9,8 @@ function input.line
     echo $choice
 end
 
+# Get a single char
+# Returns on input
 function input.char
     set -l msg $argv
     read --nchars=1 -P $msg(set_color brwhite) char
@@ -16,6 +20,7 @@ function input.char
     echo $char
 end
 
+# Get a char with no blocking
 function input.nb
     set -l oldmode (stty -g)
     stty -icanon -echo min 0 time 0

@@ -1,3 +1,0 @@
-# clt
-clt
-`cl ok`
