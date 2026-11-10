@@ -20,6 +20,7 @@ A tool for building a library of friendly front-ends for stuff you want your com
     - Missing params fall back to defaults with no extra code
 - Proper lazy loading
     - Nothing is loaded until you need it
+    - Even core libraries
 - User commands
     - Add your own commands outside of the git repo
 

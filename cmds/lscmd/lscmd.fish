@@ -2,7 +2,6 @@
 # List registered commands
 
 set ANG ~/.config/fish/functions/:ang
-source $ANG/lib/core.fish
 
 set docs (cat "$ANG/docs.md")
 set lst

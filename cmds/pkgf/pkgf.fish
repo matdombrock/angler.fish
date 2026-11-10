@@ -1,7 +1,5 @@
 #!/usr/bin/env fish
 set ANG ~/.config/fish/functions/:ang
-source $ANG/lib/core.fish
-source $ANG/lib/input.fish
 
 function yayf
     set yayq yay -Ss $query --singlelineresults

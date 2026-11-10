@@ -1,6 +1,5 @@
 #! /usr/bin/env fish
 set ANG ~/.config/fish/functions/:ang
-source $ANG/lib/graph.fish
 
 set -a sides "\
 l w W W W W w l

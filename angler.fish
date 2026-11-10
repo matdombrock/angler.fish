@@ -1,5 +1,5 @@
 set here (path dirname (realpath (status filename)))
-source $here/lib/core.fish
+source $here/lib/sc.fish
 
 set ANG_DL_PARAM ":"
 set ANG_PARAM_EXPAND "..."
@@ -110,7 +110,7 @@ rm -rf $bdir/*
 mkdir -p $bdir/:ang
 
 # Copy lib
-cp -r $here/lib $bdir/:ang/
+cp -r $here/lib/* $bdir
 
 # Build main commands
 buildcmds ./cmds

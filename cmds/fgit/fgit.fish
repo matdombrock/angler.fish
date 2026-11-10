@@ -1,6 +1,5 @@
 #!/usr/bin/env fish
 set ANG ~/.config/fish/functions/:ang
-source $ANG/lib/input.fish
 
 function section
     echo (set_color -u normal)"$argv"(set_color -u normal)

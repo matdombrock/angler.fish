@@ -1,6 +1,5 @@
 #!/usr/bin/env fish
 # This is super hacky
-
 set ANG ~/.config/fish/functions/:ang
 
 set target (string split " " $argv[1])[1]
