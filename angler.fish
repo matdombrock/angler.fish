@@ -1,7 +1,7 @@
 set here (path dirname (realpath (status filename)))
 source $here/lib/core.fish
 
-set ANG_PARAM_DELIM ":"
+set ANG_DL_PARAM ":"
 set ANG_PARAM_EXPAND "..."
 
 # Convert a single cmd file
@@ -24,7 +24,7 @@ function convert
             set cmdname (string replace "# " "" $line)
         else if string match -q "\$*" "$line" # params
             # set -l param (string split " " $line)[1]
-            set params "$params$ANG_PARAM_DELIM$line"
+            set params "$params$ANG_DL_PARAM$line"
         else if string match -q "!*" "$line" # reqs
             set -l req (string trim (string replace "!" "" "$line"))
             set reqs $reqs $req
@@ -45,7 +45,7 @@ function convert
     end
     set -l i 1
     ## Construct params
-    for param in (string split $ANG_PARAM_DELIM $params)
+    for param in (string split $ANG_DL_PARAM $params)
         if test -z "$param"
             continue
         end
