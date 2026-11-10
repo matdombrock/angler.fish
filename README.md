@@ -1,6 +1,6 @@
 # angler.fish
 
-A stream-lined shell framework for humans.
+A stream-lined shell framework for humans, made with <3 by other humans.
 
 A tool for building a library of friendly front-ends for stuff you want your computer to do.
 
