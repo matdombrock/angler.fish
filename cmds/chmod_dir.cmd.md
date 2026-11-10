@@ -6,4 +6,4 @@ $dir=. directory to update
 
 ! fd
 
-`fd --type f '.\fish$' $dir --exec chmod +x`
+`fd --type f '.fish$' $dir --exec chmod +x`
