@@ -2,8 +2,8 @@
 
 add two numbers
 
-$a first number
-$b second number
+$a=1 first number
+$b=1 second number
 
 `math $a + $b`
 

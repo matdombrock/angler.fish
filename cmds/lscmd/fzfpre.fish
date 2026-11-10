@@ -1,3 +1,9 @@
 #!/usr/bin/env fish
 
-echo -e (string replace -a "|" "\n" $argv[1])
+# This is super hacky
+for line in (string split "|" $argv[1])
+    if string match -q ":\$*" "$line"
+        set line (string replace -a ":" "\n" $line)
+    end
+    echo -e $line
+end

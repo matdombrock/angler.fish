@@ -1,0 +1,17 @@
+FROM fedora:latest
+
+RUN dnf install -y \
+  fish \
+  fd-find \
+  fzf \
+  which \
+  tput \
+  && dnf clean all
+
+WORKDIR /angler
+RUN mkdir -p /root/.config/fish/functions
+
+# Build and install, then run the shell:
+#   fish angler.fish
+#   fish install.fish
+CMD ["fish"]

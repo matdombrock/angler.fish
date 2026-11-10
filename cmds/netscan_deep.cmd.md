@@ -1,4 +1,4 @@
-# netscan_local
+# netscan_deep
 
 Scan an IP address deeply
 

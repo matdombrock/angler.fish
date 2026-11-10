@@ -13,9 +13,11 @@ A tool for building a library of friendly front-ends for stuff you want your com
     - All commands are available in the launcher with no extra setup
 - Ensure required programs are installed before running tools
     - You can safely depend on `bat`
-- Use "smart" param handling (a thing I made up but its cool)
+- Use "smart" parameter handling (a thing I made up but its cool)
     - Stop worrying about param handling
     - Missing params are handled automatically
+- Easy default parameters
+    - Missing params fall back to defaults with no extra code
 - Proper lazy loading
     - Nothing is loaded until you need it
 - User commands
@@ -23,10 +25,6 @@ A tool for building a library of friendly front-ends for stuff you want your com
 
 ### Planned
 
-- Required params
-    - Some commands are required, some optional
-- Default params
-    - Missing params fall back to defaults
 - Command aliases
     - Shortcut names for registered commands
 - Black/white list commands from build
@@ -73,7 +71,7 @@ description text
 
 $param1 the first param
 
-$param2 the second param
+$param2=3 the second param with a default value of 3
 
 ! req_cmd
 
@@ -109,6 +107,8 @@ $param2 the second param
 - Matching `$*`
 - Optional
 - Parameters may have a description after the param name
+- Default params are specified like `$param=123`
+    - Default param values currently can not contain spaces (even wrapped in quotes)
 - Must be a valid fish param name
 
 ### Requirement `! *`

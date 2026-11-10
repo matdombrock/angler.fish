@@ -1,6 +1,8 @@
 set here (path dirname (realpath (status filename)))
 source $here/lib/core.fish
 
+set ANG_PARAM_DELIM ":"
+
 # Convert a single cmd file
 function convert
     set lines (cat $argv[1])
@@ -20,8 +22,8 @@ function convert
         if string match -q "# *" "$line" # cmdname
             set cmdname (string replace "# " "" $line)
         else if string match -q "\$*" "$line" # params
-            set -l param (string split " " $line)[1]
-            set params "$params:$line"
+            # set -l param (string split " " $line)[1]
+            set params "$params$ANG_PARAM_DELIM$line"
         else if string match -q "!*" "$line" # reqs
             set -l req (string trim (string replace "!" "" "$line"))
             set reqs $reqs $req
@@ -40,19 +42,19 @@ function convert
         set fn $fn$tab"if not ensure \"$req\"; return; end\n"
     end
     set -l i 1
-    for param in (string split ":" $params)
+    for param in (string split $ANG_PARAM_DELIM $params)
         if test -z "$param"
             continue
         end
-        set split (string split " " $param)
-        set paramname $split[1]
-        set paramname (string replace "\$" "" $paramname)
-        set desc $split[2..]
-        set fn $fn$tab"set $paramname (param $paramname \"$desc\" \$argv[$i])\n"
+        set -l split (string split " " $param)
+        set -l paramname (string split = $split[1])[1]
+        set -l paramname (string replace "\$" "" $paramname)
+        set -l defval (string split = $split[1])[2]
+        set -l pdesc $split[2..]
+        set fn $fn$tab"set $paramname (param $paramname \"$pdesc\" \"\$argv[$i]\" \"$defval\")\n"
         set i (math $i + 1)
     end
     set -l fn $fn$tab"if test \"\$ANG_ECHO\" = 1\n"
-    # set -l fn $fn$tab$tab"echo \"$code\"\n"
     set -l fn $fn$tab$tab"echo $code\n" # no quotes needed
     set -l fn $fn$tab"else\n"
     set -l fn $fn$tab$tab"$code\n"
