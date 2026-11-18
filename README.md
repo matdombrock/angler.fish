@@ -56,7 +56,7 @@ fish install.fish
 ### List commands
 
 ```fish
-:lscmds
+:lsang
 ```
 
 ### Uninstall

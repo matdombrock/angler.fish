@@ -3,7 +3,7 @@
 
 set ANG ~/.config/fish/functions/:ang
 
-set docs (cat "$ANG/docs.md")
+set docs (cat "$ANG/doc.raw.md")
 set lst
 for doc in $docs
     set split (string split "|" "$doc")

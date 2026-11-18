@@ -1,8 +1,9 @@
 set here (path dirname (realpath (status filename)))
 source $here/lib/sc.fish
 
-set ANG_DL_PARAM ":"
 set ANG_PARAM_EXPAND "..."
+set ANG_DL_DOC "|||"
+set ANG_DL_PARAM ":"
 
 function logo
     echo -e (sc g)"
@@ -80,10 +81,11 @@ function build
         set -l fn $fn$tab$tab"$code\n"
         set -l fn $fn$tab"end\n"
         set -l fn $fn"end"
-        # Write
+        # Write file
         set opth (string replace ".cmd.fish" ".fish" "$bdir/:$cmdname.fish")
         echo -e "$fn" >$opth
-        echo ":$cmdname|$desc|$params" >>$bdir/:ang/docs.md
+        # Write docs
+        echo ":$cmdname$ANG_DL_DOC$desc$ANG_DL_DOC$params" >>$bdir/:ang/doc.raw.md
     end
 
     # Build all cmds in given dir
@@ -113,6 +115,22 @@ function build
         end
     end
 
+    function builddocs
+        set -l bdir $argv[1]
+        set -l docs (sort "$bdir/:ang/doc.raw.md")
+        for line in $docs
+            set split (string split $ANG_DL_DOC "$line")
+            set cmd $split[1]
+            set desc $split[2]
+            set params $split[3]
+            echo -e "# $cmd\n" >>$bdir/:ang/docs.md
+            echo -e "$desc\n" >>$bdir/:ang/docs.md
+            if not test -z "$params"
+                echo -e "## params\n $(string replace -a $ANG_DL_PARAM "\n" "$params")\n\n" >>$bdir/:ang/docs.md
+            end
+        end
+    end
+
     # Set up
     set bdir $here/.build
     mkdir -p $bdir
@@ -128,6 +146,7 @@ function build
     for dir in $blist
         buildcmds $dir $bdir
     end
+    builddocs $bdir
     logo
     echo "(is done building, look in $bdir)"
 end
